@@ -3,7 +3,7 @@
         
         <div class="sm:flex sm:items-center sm:justify-between mb-8">
             <div>
-                <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Employee Directory</h2>
+                <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Employee directory</h2>
                 <p class="mt-1 text-sm text-slate-500">Manage your team members and their associated laptop assignments.</p>
             </div>
             
@@ -14,29 +14,16 @@
                                onchange="this.form.submit()" 
                                {{ $showLeftEmployees ? 'checked' : '' }} 
                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 transition-colors">
-                        <span class="text-sm font-medium text-slate-700 group-hover:text-slate-900 transition-colors">Show Inactive</span>
+                        <span class="text-sm font-medium text-slate-700 group-hover:text-slate-900 transition-colors">Show inactive</span>
                     </label>
                 </form>
                 
                 <a href="{{ route('employees.create') }}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all">
                     <svg class="mr-2 -ml-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                    Add Employee
+                    Add employee
                 </a>
             </div>
         </div>
-
-        @if (session('error'))
-            <div class="mb-6 rounded-lg bg-red-50 p-4 border border-red-200 flex items-start">
-                <svg class="h-5 w-5 text-red-400 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                <div class="text-sm font-medium text-red-800">{{ session('error') }}</div>
-            </div>
-        @endif
-        @if (session('success'))
-            <div class="mb-6 rounded-lg bg-green-50 p-4 border border-green-200 flex items-start">
-                <svg class="h-5 w-5 text-green-400 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                <div class="text-sm font-medium text-green-800">{{ session('success') }}</div>
-            </div>
-        @endif
 
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="overflow-x-auto">
@@ -93,7 +80,7 @@
                                     <div class="mt-6">
                                         <a href="{{ route('employees.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-blue-600 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
                                             <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                                            New Employee
+                                            New employee
                                         </a>
                                     </div>
                                 </td>

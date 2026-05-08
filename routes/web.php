@@ -7,4 +7,7 @@ Route::get('/', function () {
     return redirect()->route('employees.index');
 });
 
-Route::resource('employees', EmployeeController::class);
+Route::get('employees/{employee}/deed', [\App\Http\Controllers\EmployeeController::class, 'viewDeed'])
+    ->name('employees.deed');
+
+Route::resource('employees', \App\Http\Controllers\EmployeeController::class);

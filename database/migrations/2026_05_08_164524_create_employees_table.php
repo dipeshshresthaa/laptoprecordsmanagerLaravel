@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('employees', function (Blueprint $table) {
-           $table->string('emp_code')->unique();
+            $table->string('id', 8)->primary();
+            $table->string('emp_code')->unique();
             $table->string('first_name');
             $table->string('middle_name')->nullable();
             $table->string('last_name');
@@ -40,8 +41,8 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
 
             // Replaced byte[] with string paths for file storage
-            $table->string('articleship_deed_path')->nullable();
-            $table->string('completion_certificate_path')->nullable();
+            $table->binary('articleship_deed_pdf')->nullable();
+            $table->binary('completion_certificate_pdf')->nullable();
 
             // Self-referencing foreign key for Principal
             $table->string('principal_id')->nullable();
