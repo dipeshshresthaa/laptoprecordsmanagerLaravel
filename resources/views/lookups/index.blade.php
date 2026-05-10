@@ -19,9 +19,9 @@
                             </svg>
                             <h3 id="formTitle" class="font-semibold text-slate-800">Add new entry</h3>
                         </div>
-                        {{-- <button type="button" id="cancelEditBtn" onclick="cancelEdit()"
+                        <button type="button" id="cancelEditBtn" onclick="cancelEdit()"
                             class="hidden text-xs text-slate-500 hover:text-slate-700 font-medium bg-slate-200 hover:bg-slate-300 px-2 py-1 rounded transition-colors">Cancel
-                            Edit</button> --}}
+                            Edit</button>
                     </div>
 
                     <form id="lookupForm" action="{{ route('lookups.store') }}" method="POST" class="p-5 space-y-5">
