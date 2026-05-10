@@ -146,6 +146,17 @@
                                 class="{{ request()->routeIs('employees.*') ? 'border-blue-500 text-slate-900' : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700' }} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">
                                 Employees
                             </a>
+
+                            <a href="{{ route('laptops.index') }}"
+                                class="{{ request()->routeIs('laptops.*') ? 'border-blue-500 text-slate-900' : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700' }} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">
+                                Laptops
+                            </a>
+
+                            <a href="{{ route('lookups.index') }}"
+                                class="{{ request()->routeIs('lookups.*') ? 'border-blue-500 text-slate-900' : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700' }} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">
+                                Settings - Model, make etc.
+                            </a>
+
                             @if (Auth::user()->is_admin)
                                 <a href="{{ route('users.index') }}"
                                     class="{{ request()->routeIs('users.*') ? 'border-blue-500 text-slate-900' : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700' }} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">

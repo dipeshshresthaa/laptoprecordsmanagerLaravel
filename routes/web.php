@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SystemLookupController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -34,13 +35,24 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
         Route::get('employees/export/pdf', [EmployeeController::class, 'exportPdf'])->name('employees.export.pdf');
+        Route::get('settings/lookups', [SystemLookupController::class, 'index'])->name('lookups.index');
+        Route::post('settings/lookups', [SystemLookupController::class, 'store'])->name('lookups.store');
+        Route::put('settings/lookups/{lookup}', [SystemLookupController::class, 'update'])->name('lookups.update');
+        Route::delete('settings/lookups/{lookup}', [SystemLookupController::class, 'destroy'])->name('lookups.destroy');
+
 
         Route::get('employees/{employee}/mark-left', [EmployeeController::class, 'showMarkLeftForm'])->name('employees.mark-left');
         Route::post('employees/{employee}/mark-left', [EmployeeController::class, 'processMarkLeft'])->name('employees.process-left');
+        Route::get('/api/lookups/models/{brandId}', [App\Http\Controllers\LaptopController::class, 'getModelsByBrand']);
+
+
 
         // Employees
         Route::get('employees/{employee}/deed', [EmployeeController::class, 'viewDeed'])->name('employees.deed');
         Route::resource('employees', EmployeeController::class);
+
+        // Laptop Routes
+        Route::resource('laptops', App\Http\Controllers\LaptopController::class);
 
         // Users (Admin Only)
         Route::middleware('admin')->group(function () {
