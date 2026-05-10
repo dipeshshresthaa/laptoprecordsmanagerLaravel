@@ -6,21 +6,35 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
+            // Using UUID to match the C# Guid.NewGuid().ToString() logic
+            $table->uuid('id')->primary();
+            
+            $table->string('username')->unique();
+            $table->string('password_hash');
+            $table->string('salt');
+            
+            $table->boolean('is_admin')->default(false);
+            $table->boolean('is_active')->default(true);
+
+            // Storing the Employee ID
+            // Note: We don't use strict foreign key constraints here to avoid a circular 
+            // dependency crash during the initial migration (since the employees table is created after this one).
+            $table->string('employee_id')->nullable();
+
+            // Auditable Entity properties mapping
+            $table->string('created_by_id')->nullable();
+            $table->string('modified_by_id')->nullable();
+
+            // Required for Laravel's "Remember Me" checkbox to function
+            $table->rememberToken(); 
             $table->timestamps();
         });
 
+        // The default migration file also creates standard Laravel cache/job tables. 
+        // We leave these intact.
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
@@ -37,9 +51,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('users');

@@ -45,7 +45,7 @@
                             <option value="Partner" {{ old('role', $employee->role) == 'Partner' ? 'selected' : '' }}>
                                 Partner</option>
                             <option value="ArticleTrainee"
-                                {{ old('role', $employee->role) == 'ArticleTrainee' ? 'selected' : '' }}>Article Trainee
+                                {{ old('role', $employee->role) == 'ArticleTrainee' ? 'selected' : '' }}>Article trainee
                             </option>
                         </select>
                     </div>

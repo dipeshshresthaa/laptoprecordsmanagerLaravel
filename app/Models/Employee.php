@@ -58,10 +58,20 @@ class Employee extends Model
         return $this->hasMany(Employee::class, 'principal_id');
     }
 
-    // Relationship: User Account
-    public function userAccount(): BelongsTo
+    public function userAccount()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->hasOne(User::class, 'employee_id');
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by_id');
+    }
+
+    // The Audit Trail: Who last updated this employee record?
+    public function modifier()
+    {
+        return $this->belongsTo(User::class, 'modified_by_id');
     }
 
     // Example Relationship placeholder for LaptopAssignments
