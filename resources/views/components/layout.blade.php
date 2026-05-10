@@ -127,22 +127,38 @@
         <nav class="bg-white border-b border-slate-200 sticky top-0 z-10">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
-                    <div class="flex items-center space-x-3">
-                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
-                            </path>
-                        </svg>
-                        <a href="{{ route('employees.index') }}"
-                            class="font-bold text-xl tracking-tight text-slate-800 hover:text-blue-600 transition-colors">
-                            Laptop records manager (LRM)
-                        </a>
+                    <div class="flex">
+                        <div class="flex items-center space-x-3 mr-8">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                            <span class="font-bold text-xl tracking-tight text-slate-800">LRM</span>
+                        </div>
+
+                        <div class="hidden sm:flex sm:space-x-8">
+                            <a href="{{ route('dashboard') }}"
+                                class="{{ request()->routeIs('dashboard') ? 'border-blue-500 text-slate-900' : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700' }} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">
+                                Dashboard
+                            </a>
+                            <a href="{{ route('employees.index') }}"
+                                class="{{ request()->routeIs('employees.*') ? 'border-blue-500 text-slate-900' : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700' }} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">
+                                Employees
+                            </a>
+                            @if (Auth::user()->is_admin)
+                                <a href="{{ route('users.index') }}"
+                                    class="{{ request()->routeIs('users.*') ? 'border-blue-500 text-slate-900' : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700' }} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">
+                                    Users
+                                </a>
+                            @endif
+                        </div>
                     </div>
+
                     <div class="flex items-center space-x-4">
                         <span class="text-sm font-medium text-slate-600 hidden sm:inline-block">
-                            Hello, {{ Auth::user()->name ?? 'User' }}
+                            Hello, {{ Auth::user()->employee->first_name ?? Auth::user()->username }}
                         </span>
-
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
                             <button type="submit"

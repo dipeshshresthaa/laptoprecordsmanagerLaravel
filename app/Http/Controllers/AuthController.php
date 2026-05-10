@@ -11,7 +11,7 @@ class AuthController extends Controller
     public function showLoginForm()
     {
         if (Auth::check()) {
-            return redirect()->route('employees.index');
+            return redirect()->route('dashboard')->with('info', 'You are already logged in.');
         }
 
         return view('auth.login');
@@ -57,7 +57,34 @@ class AuthController extends Controller
         Auth::login($user, $request->boolean('remember'));
         $request->session()->regenerate();
 
-        return redirect()->intended(route('employees.index'))->with('success', 'Login successful');
+        return redirect()->intended(route('dashboard'))->with('success', 'Login successful');
+    }
+
+    public function showChangePasswordForm()
+    {
+        return view('auth.change-password');
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|string|min:4|confirmed',
+        ]);
+
+        $user = Auth::user();
+
+        // Generate new salt and hash
+        $salt = base64_encode(random_bytes(16));
+        $combinedString = $request->password . $salt;
+        $hashedBytes = hash('sha256', $combinedString, true);
+
+        // Update user
+        $user->salt = $salt;
+        $user->password_hash = base64_encode($hashedBytes);
+        $user->requires_password_change = false; // Clear the flag
+        $user->save();
+
+        return redirect()->route('dashboard')->with('success', 'Password updated successfully!');
     }
 
     public function logout(Request $request)

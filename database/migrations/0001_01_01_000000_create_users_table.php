@@ -11,13 +11,14 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             // Using UUID to match the C# Guid.NewGuid().ToString() logic
             $table->uuid('id')->primary();
-            
+
             $table->string('username')->unique();
             $table->string('password_hash');
             $table->string('salt');
-            
+
             $table->boolean('is_admin')->default(false);
             $table->boolean('is_active')->default(true);
+            $table->boolean('requires_password_change')->default(true); // <-- ADD THIS LINE
 
             // Storing the Employee ID
             // Note: We don't use strict foreign key constraints here to avoid a circular 
@@ -29,7 +30,7 @@ return new class extends Migration
             $table->string('modified_by_id')->nullable();
 
             // Required for Laravel's "Remember Me" checkbox to function
-            $table->rememberToken(); 
+            $table->rememberToken();
             $table->timestamps();
         });
 

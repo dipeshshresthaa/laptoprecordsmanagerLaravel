@@ -5,16 +5,34 @@ namespace App\Http\Controllers;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 
 class EmployeeController extends Controller
 {
     public function index(Request $request)
     {
-        // Equivalent to EmployeeListViewModel.LoadData()
-        $showLeftEmployees = $request->has('show_left_employees');
+        $showLeftEmployees = $request->boolean('show_left_employees');
+        $search = $request->input('search');
 
-        $employees = Employee::query()->where('is_active', !$showLeftEmployees)->get();
+        $query = Employee::query();
+
+        // Handle Active/Inactive Toggle
+        if (!$showLeftEmployees) {
+            $query->where('is_active', true);
+        }
+
+        // Handle the Search Box
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhere('emp_code', 'like', "%{$search}%");
+            });
+        }
+
+        // Sort alphabetically by first name
+        $employees = $query->orderBy('first_name', 'asc')->get();
 
         return view('employees.index', compact('employees', 'showLeftEmployees'));
     }
@@ -171,5 +189,69 @@ class EmployeeController extends Controller
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="ArticleshipDeed_' . $employee->emp_code . '.pdf"'
         ]);
+    }
+
+    public function showMarkLeftForm(Employee $employee)
+    {
+        // 1. Check if they are trying to offboard themselves
+        if (\Illuminate\Support\Facades\Auth::user()->employee_id === $employee->id) {
+            return redirect()->route('employees.index')->with('error', 'Action denied: You cannot offboard yourself.');
+        }
+
+        if (!$employee->is_active) {
+            return redirect()->route('employees.index')->with('error', 'This employee has already been marked as left.');
+        }
+
+        return view('employees.mark-left', compact('employee'));
+    }
+
+    public function processMarkLeft(Request $request, Employee $employee)
+    {
+        // 1. Check if they are trying to offboard themselves (prevents bypassing UI)
+        if (\Illuminate\Support\Facades\Auth::user()->employee_id === $employee->id) {
+            return redirect()->route('employees.index')->with('error', 'Action denied: You cannot offboard yourself.');
+        }
+
+        $request->validate([
+            'exit_date' => 'required|date|before_or_equal:9999-12-31',
+            'reason' => 'required|string|max:255',
+        ], [
+            'reason.required' => 'Please provide a reason (e.g., Resigned, Terminated).'
+        ]);
+
+        $employee->is_active = false;
+        $employee->exit_date = $request->exit_date;
+        $employee->exit_reason = $request->reason;
+        $employee->modified_by_id = \Illuminate\Support\Facades\Auth::id();
+        $employee->save();
+
+        if ($request->boolean('deactivate_user') && $employee->userAccount) {
+            $employee->userAccount->is_active = false;
+            $employee->userAccount->save();
+        }
+
+        return redirect()->route('employees.index')->with('success', "{$employee->first_name} {$employee->last_name} has been successfully offboarded.");
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $showLeftEmployees = $request->boolean('show_left_employees');
+
+        $query = Employee::query();
+
+        // Match the UI filtering
+        if (!$showLeftEmployees) {
+            $query->where('is_active', true);
+        }
+
+        // Sort alphabetically
+        $employees = $query->orderBy('first_name', 'asc')->get();
+
+        // Load the specialized PDF Blade view
+        $pdf = Pdf::loadView('employees.pdf', compact('employees', 'showLeftEmployees'));
+
+        // Download the file
+        $fileName = 'Employee_Report_' . date('Y-m-d') . '.pdf';
+        return $pdf->download($fileName);
     }
 }

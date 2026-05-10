@@ -60,18 +60,29 @@ class UserController extends Controller
             'password' => 'nullable|string|min:4',
         ]);
 
+        // CRITICAL SECURITY RULE: Prevent activating an account if the employee is inactive
+        $wantsToBeActive = $request->boolean('is_active');
+
+        if ($wantsToBeActive && !$user->employee->is_active) {
+            return back()->withInput()->withErrors([
+                'is_active' => 'Action denied: You cannot activate a user account linked to an offboarded employee.'
+            ]);
+        }
+
         $user->username = $request->username;
         $user->is_admin = $request->boolean('is_admin');
-        $user->is_active = $request->boolean('is_active');
+        $user->is_active = $wantsToBeActive;
 
-        // Only update the password if the Admin typed a new one into the box
         if ($request->filled('password')) {
             $salt = base64_encode(random_bytes(16));
             $combinedString = $request->password . $salt;
             $hashedBytes = hash('sha256', $combinedString, true);
-            
+
             $user->salt = $salt;
             $user->password_hash = base64_encode($hashedBytes);
+
+            // Force them to change the new password you just gave them
+            $user->requires_password_change = true;
         }
 
         $user->save();

@@ -61,17 +61,26 @@
                     <label class="flex items-center space-x-3 cursor-pointer group">
                         <input type="checkbox" name="is_admin" value="1" {{ old('is_admin', $user->is_admin ?? false) ? 'checked' : '' }} class="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500">
                         <div>
-                            <span class="text-sm font-medium text-slate-900 block group-hover:text-blue-600 transition-colors">Administrator Access</span>
+                            <span class="text-sm font-medium text-slate-900 block group-hover:text-blue-600 transition-colors">Administrator access</span>
                             <span class="text-xs text-slate-500 block">Grants full control over users, settings, and destructive actions.</span>
                         </div>
                     </label>
 
                     @if(isset($user))
-                    <label class="flex items-center space-x-3 cursor-pointer group">
-                        <input type="checkbox" name="is_active" value="1" {{ old('is_active', $user->is_active ?? true) ? 'checked' : '' }} class="w-4 h-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500">
+                    <label class="flex items-center space-x-3 {{ !$user->employee->is_active ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer group' }}">
+                        <input type="checkbox" name="is_active" value="1" 
+                               {{ old('is_active', $user->is_active ?? true) ? 'checked' : '' }} 
+                               {{ !$user->employee->is_active ? 'disabled' : '' }}
+                               class="w-4 h-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500">
                         <div>
-                            <span class="text-sm font-medium text-slate-900 block group-hover:text-emerald-600 transition-colors">Account Active</span>
+                            <span class="text-sm font-medium text-slate-900 block {{ $user->employee->is_active ? 'group-hover:text-emerald-600' : '' }} transition-colors">Account active</span>
                             <span class="text-xs text-slate-500 block">Uncheck to lock the user out without deleting their history.</span>
+                            
+                            @if(!$user->employee->is_active)
+                                <span class="text-xs text-rose-500 font-semibold block mt-1">
+                                    You cannot activate this account because the employee is offboarded.
+                                </span>
+                            @endif
                         </div>
                     </label>
                     @endif

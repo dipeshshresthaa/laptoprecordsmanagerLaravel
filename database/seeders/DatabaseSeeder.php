@@ -41,7 +41,8 @@ class DatabaseSeeder extends Seeder
             'salt' => $salt,
             'is_admin' => true,
             'is_active' => true,
-            'employee_id' => $adminEmployee->id, // Map back to the employee
+            'requires_password_change' => true, // <-- ADD THIS LINE
+            'employee_id' => $adminEmployee->id,
         ]);
 
         $this->command->info('Database seeded successfully!');
