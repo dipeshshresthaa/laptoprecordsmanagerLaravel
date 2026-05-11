@@ -21,7 +21,7 @@
                         </div>
                         <button type="button" id="cancelEditBtn" onclick="cancelEdit()"
                             class="hidden text-xs text-slate-500 hover:text-slate-700 font-medium bg-slate-200 hover:bg-slate-300 px-2 py-1 rounded transition-colors">Cancel
-                            Edit</button>
+                            edit</button>
                     </div>
 
                     <form id="lookupForm" action="{{ route('lookups.store') }}" method="POST" class="p-5 space-y-5">
@@ -215,8 +215,8 @@
             }
 
             // Transform UI to "Edit Mode"
-            title.textContent = 'Edit Entry';
-            btn.textContent = 'Update Database';
+            title.textContent = 'Edit entry';
+            btn.textContent = 'Update database';
             btn.classList.replace('bg-blue-600', 'bg-amber-500');
             btn.classList.replace('hover:bg-blue-700', 'hover:bg-amber-600');
             cancelBtn.classList.remove('hidden');

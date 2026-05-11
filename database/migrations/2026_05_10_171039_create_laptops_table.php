@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('laptops', function (Blueprint $table) {
             $table->id(); // Matches C# int Id
-            
+
             $table->string('laptop_fa_code')->nullable();
             $table->string('serial_number')->unique();
             $table->string('service_tag')->nullable();
@@ -32,10 +32,11 @@ return new class extends Migration
             $table->date('disposal_date')->nullable();
             $table->text('laptop_identifier_notes')->nullable();
             $table->text('laptop_disposal_notes')->nullable();
-            $table->string('status')->default('Available'); 
+            $table->string('status')->default('Available');
 
             // Web apps store file paths, not raw byte arrays in the DB
-            $table->string('laptop_photo_path')->nullable();
+            // $table->string('laptop_photo_path')->nullable();
+            $table->binary('laptop_photo')->nullable();
 
             // Auditable Entity Columns
             $table->uuid('created_by_id')->nullable();

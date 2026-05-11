@@ -1,11 +1,16 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\LaptopAssignmentController;
+use App\Http\Controllers\LaptopController;
+use App\Http\Controllers\LaptopDisposalController;
+use App\Http\Controllers\LaptopRepairController;
+use App\Http\Controllers\LaptopUpgradeController;
 use App\Http\Controllers\SystemLookupController;
+use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -40,19 +45,46 @@ Route::middleware(['auth'])->group(function () {
         Route::put('settings/lookups/{lookup}', [SystemLookupController::class, 'update'])->name('lookups.update');
         Route::delete('settings/lookups/{lookup}', [SystemLookupController::class, 'destroy'])->name('lookups.destroy');
 
-
         Route::get('employees/{employee}/mark-left', [EmployeeController::class, 'showMarkLeftForm'])->name('employees.mark-left');
         Route::post('employees/{employee}/mark-left', [EmployeeController::class, 'processMarkLeft'])->name('employees.process-left');
-        Route::get('/api/lookups/models/{brandId}', [App\Http\Controllers\LaptopController::class, 'getModelsByBrand']);
+        Route::get('/api/lookups/models/{brandId}', [LaptopController::class, 'getModelsByBrand']);
 
+        // Laptop Lifecycle (Assignment & Return)
+        Route::get('laptops/{laptop}/assign', [LaptopAssignmentController::class, 'createAssign'])->name('laptops.assign');
+        Route::post('laptops/{laptop}/assign', [LaptopAssignmentController::class, 'storeAssign'])->name('laptops.store_assign');
 
+        Route::get('laptops/{laptop}/return', [LaptopAssignmentController::class, 'createReturn'])->name('laptops.return');
+        Route::post('laptops/{laptop}/return', [LaptopAssignmentController::class, 'storeReturn'])->name('laptops.store_return');
+
+        // PDF Download
+        Route::get('assignments/{assignment}/assign-pdf', [LaptopAssignmentController::class, 'downloadAssignPdf'])->name('assignments.assign_pdf');
+        Route::get('assignments/{assignment}/return-pdf', [LaptopAssignmentController::class, 'downloadReturnPdf'])->name('assignments.return_pdf');
+
+        // Repairs
+        Route::get('laptops/{laptop}/repair', [LaptopRepairController::class, 'createSend'])->name('laptops.repair');
+        Route::post('laptops/{laptop}/repair', [LaptopRepairController::class, 'storeSend'])->name('laptops.store_repair');
+
+        // NEW: Return from Repair
+        Route::get('laptops/{laptop}/repair-return', [LaptopRepairController::class, 'createReturn'])->name('laptops.repair_return');
+        Route::post('laptops/{laptop}/repair-return', [LaptopRepairController::class, 'storeReturn'])->name('laptops.store_repair_return');
+
+        // Upgrades
+        Route::get('laptops/{laptop}/upgrade', [LaptopUpgradeController::class, 'create'])->name('laptops.upgrade');
+        Route::post('laptops/{laptop}/upgrade', [LaptopUpgradeController::class, 'store'])->name('laptops.store_upgrade');
+
+        // Disposal
+        Route::get('laptops/{laptop}/dispose', [LaptopDisposalController::class, 'create'])->name('laptops.dispose');
+        Route::post('laptops/{laptop}/dispose', [LaptopDisposalController::class, 'store'])->name('laptops.store_dispose');
+
+        Route::get('laptops/{laptop}/history', [LaptopController::class, 'show'])->name('laptops.history');
+        Route::get('laptops/{laptop}/history/pdf', [LaptopController::class, 'downloadHistoryPdf'])->name('laptops.history.pdf');
 
         // Employees
         Route::get('employees/{employee}/deed', [EmployeeController::class, 'viewDeed'])->name('employees.deed');
         Route::resource('employees', EmployeeController::class);
 
         // Laptop Routes
-        Route::resource('laptops', App\Http\Controllers\LaptopController::class);
+        Route::resource('laptops', LaptopController::class);
 
         // Users (Admin Only)
         Route::middleware('admin')->group(function () {
