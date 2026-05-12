@@ -188,7 +188,7 @@
                             <span class="text-xs text-slate-500 uppercase font-semibold tracking-wider">Logged in
                                 as</span>
                             <span class="text-sm font-bold text-slate-900">
-                                {{ Auth::user()->employee->first_name ?? Auth::user()->username }}
+                                {{ Auth::user()->employee->full_name ?? Auth::user()->username }}
                             </span>
                         </div>
 

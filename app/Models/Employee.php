@@ -40,9 +40,34 @@ class Employee extends Model
     protected function fullName(): Attribute
     {
         return Attribute::make(
-            get: fn () => collect([$this->first_name, $this->middle_name, $this->last_name])
-                ->filter(fn ($name) => !empty(trim($name)))
-                ->implode(' ')
+            get: fn() => implode(' ', array_filter([
+                $this->first_name,
+                $this->middle_name,
+                $this->last_name
+            ], fn($value) => !empty(trim($value ?? ''))))
+        );
+    }
+
+    protected function roleDisplay(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => match ($this->role) {
+                'ArticleTrainee' => 'Article trainee',
+                'Partner'        => 'Partner',
+                'Other'          => 'Other',
+                default          => $this->role,
+            }
+        );
+    }
+
+    protected function roleBadgeClasses(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => match ($this->role) {
+                'ArticleTrainee' => 'bg-blue-100 text-blue-800 border-blue-200',
+                'Partner'        => 'bg-purple-100 text-purple-800 border-purple-200',
+                default          => 'bg-slate-100 text-slate-800 border-slate-200',
+            }
         );
     }
 
@@ -73,6 +98,8 @@ class Employee extends Model
     {
         return $this->belongsTo(User::class, 'modified_by_id');
     }
+
+
 
     // Example Relationship placeholder for LaptopAssignments
     // public function laptopAssignments(): HasMany

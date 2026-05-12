@@ -10,10 +10,16 @@
         }
 
         body {
-            font-family: Calibri;
+            /* Use 'sans-serif' as the final fallback for PDF engines */
+            font-family: 'Helvetica', 'Arial', sans-serif;
             font-size: 12px;
             color: #1e293b;
             line-height: 1.5;
+        }
+
+        table {
+            font-family: inherit;
+            font-size: inherit;
         }
 
         /* Header / Letterhead */
@@ -196,7 +202,7 @@
         </tr>
         <tr>
             <td class="label">Serial number</td>
-            <td class="value" style="font-family: monospace;">{{ $assignment->laptop->serial_number }}</td>
+            <td class="value">{{ $assignment->laptop->serial_number }}</td>
         </tr>
     </table>
 
@@ -204,7 +210,7 @@
     <table class="info-table">
         <tr>
             <td class="label">Physical condition</td>
-            <td class="value" style="font-weight: bold;">{{ $assignment->return_condition ?? 'Not Specified' }}</td>
+            <td class="value" style="font-weight: bold;">{{ $assignment->return_condition ?? 'Not specified' }}</td>
         </tr>
         <tr>
             <td class="label">Inspection notes</td>
@@ -224,8 +230,7 @@
             <td class="sig-box">
                 <div class="sig-line">
                     <div class="sig-title">Returning employee</div>
-                    <div class="sig-name">{{ $assignment->employee->first_name }}
-                        {{ $assignment->employee->last_name }}</div>
+                    <div class="sig-name">{{ $assignment->employee->full_name }}</div>
                 </div>
             </td>
 
@@ -234,8 +239,7 @@
                 <div class="sig-line">
                     <div class="sig-title">Receiving officer</div>
                     <div class="sig-name">
-                        {{ $assignment->returnedBy?->first_name ?? $assignment->returnedBy?->name }}
-                        {{ $assignment->returnedBy?->last_name }}
+                        {{ $assignment->returnedBy?->employee->full_name }}
                     </div>
                 </div>
             </td>

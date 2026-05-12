@@ -176,7 +176,7 @@ class LaptopController extends Controller
                 'type' => 'Assignment',
                 'icon' => '👨‍💻',
                 'color' => 'bg-blue-100 text-blue-600',
-                'title' => "Assigned to {$assignment->employee->first_name} {$assignment->employee->last_name}",
+                'title' => "Assigned to {$assignment->employee->full_name}",
                 'details' => "Department: {$assignment->employee->department}",
             ]);
 
@@ -187,7 +187,7 @@ class LaptopController extends Controller
                     'type' => 'Return',
                     'icon' => '↩️',
                     'color' => 'bg-amber-100 text-amber-600',
-                    'title' => "Returned by {$assignment->employee->first_name} {$assignment->employee->last_name}",
+                    'title' => "Returned by {$assignment->employee->full_name}",
                     'details' => "Condition: {$assignment->return_condition}. Notes: {$assignment->return_reason}",
                 ]);
             }
@@ -212,7 +212,7 @@ class LaptopController extends Controller
                     'icon' => '📥',
                     'color' => 'bg-emerald-100 text-emerald-600',
                     'title' => "Received back from {$repair->vendor_name}",
-                    'details' => "Resolution: {$repair->repair_notes} | Cost: $".number_format($repair->repair_cost, 2),
+                    'details' => "Resolution: {$repair->repair_notes} | Cost: Rs. ".number_format($repair->repair_cost, 2),
                 ]);
             }
         }
@@ -224,8 +224,8 @@ class LaptopController extends Controller
                 'type' => 'Hardware upgrade',
                 'icon' => '⚙️',
                 'color' => 'bg-purple-100 text-purple-600',
-                'title' => "{$upgrade->upgrade_type} Upgraded",
-                'details' => "Changed from {$upgrade->previous_spec} to {$upgrade->new_spec}. Cost: $".number_format($upgrade->cost, 2),
+                'title' => "{$upgrade->upgrade_type} upgraded",
+                'details' => "Changed from {$upgrade->previous_spec} to {$upgrade->new_spec}. Cost: Rs. ".number_format($upgrade->cost, 2),
             ]);
         }
 
@@ -249,5 +249,31 @@ class LaptopController extends Controller
 
             return $b->date <=> $a->date; // Different days: Newest date goes to top
         })->values();
+    }
+
+    public function getNextFaSuggestions()
+    {
+        $laptops = Laptop::whereNotNull('laptop_fa_code')->pluck('laptop_fa_code');
+        $suggestions = [];
+
+        foreach ($laptops as $code) {
+            // Regex to split prefix from number (e.g., NAC-LAPT-001 -> [NAC-LAPT-, 001])
+            if (preg_match('/^(.*?)(\d+)$/', $code, $matches)) {
+                $prefix = $matches[1];
+                $number = intval($matches[2]);
+
+                if (! isset($suggestions[$prefix]) || $number > $suggestions[$prefix]) {
+                    $suggestions[$prefix] = $number;
+                }
+            }
+        }
+
+        $finalSuggestions = [];
+        foreach ($suggestions as $prefix => $lastNum) {
+            $nextNum = str_pad($lastNum + 1, 3, '0', STR_PAD_LEFT);
+            $finalSuggestions[] = $prefix.$nextNum;
+        }
+
+        return response()->json($finalSuggestions);
     }
 }

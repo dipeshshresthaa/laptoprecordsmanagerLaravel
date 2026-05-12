@@ -10,7 +10,7 @@
         }
 
         body {
-            font-family: Arial;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             font-size: 12px;
             color: #1e293b;
             line-height: 1.5;
@@ -237,8 +237,7 @@
             <td class="sig-box">
                 <div class="sig-line">
                     <div class="sig-title">Authorized issuer</div>
-                    <div class="sig-name">{{ Auth::user()->first_name ?? Auth::user()->name }}
-                        {{ Auth::user()->last_name ?? '' }}</div>
+                    <div class="sig-name">{{ Auth::user()->employee->full_name}}</div>
                 </div>
             </td>
         </tr>

@@ -16,7 +16,7 @@ class SystemLookupController extends Controller
             ->get()
             ->groupBy('category');
 
-        $brands = SystemLookup::query()->where('category', 'Brand')->orderBy('value','asc')->get();
+        $brands = SystemLookup::query()->where('category', 'Brand')->orderBy('value', 'asc')->get();
         $categories = ['Brand', 'Model', 'Processor', 'RamSize', 'StorageSize', 'ScreenSize'];
 
         return view('lookups.index', compact('lookups', 'brands', 'categories'));
@@ -34,7 +34,7 @@ class SystemLookupController extends Controller
                 // PREVENT DUPLICATES: Must be unique for this specific category and parent
                 Rule::unique('system_lookups')->where(function ($query) use ($request) {
                     return $query->where('category', $request->category)
-                                 ->where('parent_id', $request->category === 'Model' ? $request->parent_id : null);
+                        ->where('parent_id', $request->category === 'Model' ? $request->parent_id : null);
                 })
             ],
         ]);
@@ -65,7 +65,7 @@ class SystemLookupController extends Controller
                 // PREVENT DUPLICATES: Ignore the current item being edited so it can be saved
                 Rule::unique('system_lookups')->where(function ($query) use ($request) {
                     return $query->where('category', $request->category)
-                                 ->where('parent_id', $request->category === 'Model' ? $request->parent_id : null);
+                        ->where('parent_id', $request->category === 'Model' ? $request->parent_id : null);
                 })->ignore($lookup->id)
             ],
         ]);
@@ -87,5 +87,29 @@ class SystemLookupController extends Controller
     {
         $lookup->delete($lookup->id);
         return back()->with('success', 'Item removed successfully.');
+    }
+
+    public function quickStore(Request $request)
+    {
+        $request->validate([
+            'category' => 'required|string',
+            'value' => [
+                'required',
+                'string',
+                'max:255',
+                // Ensure no duplicates within the same category
+                Rule::unique('system_lookups')->where(fn($q) => $q->where('category', $request->category))
+            ],
+            'parent_id' => 'nullable|exists:system_lookups,id'
+        ]);
+
+        $lookup = SystemLookup::create([
+            'category' => $request->category,
+            'value' => $request->value,
+            'parent_id' => $request->category === 'Model' ? $request->parent_id : null,
+            'is_active' => true,
+        ]);
+
+        return response()->json($lookup);
     }
 }

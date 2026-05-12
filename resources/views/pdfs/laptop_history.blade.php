@@ -167,8 +167,15 @@
             </td>
             <td width="33%">
                 <span class="specs-label">Current Status</span>
-                <span class="specs-value"
-                    style="color: #2563eb; text-transform: uppercase;">{{ $laptop->status }}</span>
+                <span class="specs-value" style="color: #2563eb; text-transform: uppercase;">
+                    {{ $laptop->status }}
+                    @if ($laptop->status === 'Assigned' && $laptop->activeAssignment)
+                        <br>
+                        <span style="color: #64748b; text-transform: none; font-size: 10px; font-weight: normal;">
+                            Assigned to: {{ $laptop->activeAssignment->employee?->full_name ?? 'Unknown' }}
+                        </span>
+                    @endif
+                </span>
             </td>
         </tr>
         <tr>

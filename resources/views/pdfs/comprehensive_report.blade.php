@@ -114,10 +114,10 @@
         <tbody>
             @foreach ($activeStaff as $staff)
                 <tr>
-                    <td><strong>{{ $staff->first_name }} {{ $staff->last_name }}</strong></td>
-                    <td>{{ $staff->role }}</td>
+                    <td><strong>{{ $staff->full_name }}</strong></td>
+                    <td>{{ $staff->role_display }}</td>
                     <td>{{ $staff->department ?? '-' }}</td>
-                    <td>{{ $staff->principal->first_name ?? '-' }} {{ $staff->principal->last_name ?? '' }}</td>
+                    <td>{{ $staff->principal->full_name ?? '-' }}</td>
                 </tr>
             @endforeach
         </tbody>
@@ -138,10 +138,10 @@
         <tbody>
             @foreach ($leftStaff as $staff)
                 <tr>
-                    <td><strong>{{ $staff->first_name }} {{ $staff->last_name }}</strong></td>
-                    <td>{{ $staff->role }}</td>
+                    <td><strong>{{ $staff->full_name }}</strong></td>
+                    <td>{{ $staff->role_display }}</td>
                     <td>{{ $staff->department ?? '-' }}</td>
-                    <td>{{ $staff->principal->first_name ?? '-' }} {{ $staff->principal->last_name ?? '' }}</td>
+                    <td>{{ $staff->principal->full_name ?? '-' }}</td>
                 </tr>
             @endforeach
         </tbody>
@@ -153,23 +153,25 @@
 
     @forelse($principalGroups as $principalId => $trainees)
         @php $principal = $allPrincipals->get($principalId); @endphp
+
         <div class="group-title">
-            Principal: {{ $principal ? "{$principal->first_name} {$principal->last_name}" : 'Unassigned' }}
+            Principal: {{ $principal ? $principal->full_name : 'Unassigned' }}
             ({{ $trainees->count() }} trainees)
         </div>
+
         <table class="data-table">
             <thead>
                 <tr>
-                    <th width="40%">Trainee name</th>
-                    <th width="30%">Department</th>
+                    <th width="40%">Trainee Name</th>
+                    <th width="30%">Joining Date</th> {{-- Added for clarity --}}
                     <th width="30%">Status</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($trainees as $trainee)
                     <tr>
-                        <td>{{ $trainee->first_name }} {{ $trainee->last_name }}</td>
-                        <td>{{ $trainee->department ?? '-' }}</td>
+                        <td>{{ $trainee->full_name }}</td>
+                        <td>{{ $trainee->joining_date?->format('d-M-Y') }}</td>
                         <td>Active</td>
                     </tr>
                 @endforeach
@@ -195,10 +197,10 @@
         <tbody>
             @foreach ($totalStaff as $staff)
                 <tr>
-                    <td><strong>{{ $staff->first_name }} {{ $staff->last_name }}</strong></td>
-                    <td>{{ $staff->role }}</td>
+                    <td><strong>{{ $staff->full_name }}</strong></td>
+                    <td>{{ $staff->role_display }}</td>
                     <td>{{ $staff->department ?? '-' }}</td>
-                    <td>{{ $staff->principal->first_name ?? '-' }} {{ $staff->principal->last_name ?? '' }}</td>
+                    <td>{{ $staff->principal->full_name ?? 'NA' }}</td>
                     <td>{{ $staff->is_active ? 'Active' : 'Left' }}</td>
                 </tr>
             @endforeach

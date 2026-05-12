@@ -97,9 +97,8 @@ class LaptopAssignmentController extends Controller
     {
         $assignment->load(['laptop.brand', 'laptop.model', 'laptop.processor', 'laptop.ramSize', 'laptop.storageSize', 'laptop.screenSize', 'employee', 'assignedBy']);
         $pdf = Pdf::loadView('pdfs.assignment_form', compact('assignment'));
-        $filename = "Assignment-{$assignment->employee->first_name}-{$assignment->employee->last_name}-".now()->format('YmdHis').'.pdf';
+        $filename = "Assignment-{$assignment->employee->full_name}-".now()->format('YmdHis').'.pdf';
 
-        // CHANGED from stream() to download()
         return $pdf->stream($filename);
     }
 
@@ -107,7 +106,7 @@ class LaptopAssignmentController extends Controller
     {
         $assignment->load(['laptop.brand', 'laptop.model', 'laptop.processor', 'laptop.ramSize', 'laptop.storageSize', 'laptop.screenSize', 'employee', 'returnedBy']);
         $pdf = Pdf::loadView('pdfs.return_form', compact('assignment'));
-        $filename = "Return_{$assignment->employee->first_name}_{$assignment->employee->last_name}_".now()->format('YmdHis').'.pdf';
+        $filename = "Return_{$assignment->employee->full_name}_".now()->format('YmdHis').'.pdf';
 
         // CHANGED from stream() to download()
         return $pdf->stream($filename);

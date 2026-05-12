@@ -74,8 +74,8 @@
             @foreach($employees as $emp)
                 <tr class="{{ !$emp->is_active ? 'inactive' : '' }}">
                     <td>{{ $emp->emp_code }}</td>
-                    <td>{{ $emp->first_name }} {{ $emp->last_name }}</td>
-                    <td>{{ $emp->role }} <br> <span style="font-size:10px; color:#666;">{{ $emp->designation }}</span></td>
+                    <td>{{ $emp->full_name }}</td>
+                    <td>{{ $emp->role_display }} <br> <span style="font-size:10px; color:#666;">{{ $emp->designation }}</span></td>
                     <td>{{ $emp->phone_number ?? 'N/A' }}</td>
                     <td>{{ $emp->pan_number ?? 'N/A' }}</td>
                     <td>

@@ -47,17 +47,25 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-700">FA code</label>
-                        <input type="text" name="laptop_fa_code"
+                        <input type="text" name="laptop_fa_code" id="fa_code_input"
                             value="{{ old('laptop_fa_code', $laptop->laptop_fa_code) }}" {{ $disabled }}
                             class="mt-1 w-full rounded-lg border-slate-300 shadow-sm text-sm focus:border-blue-500 focus:ring-blue-500">
+
+                        <div id="fa_suggestions" class="mt-1 flex flex-wrap gap-1">
+                        </div>
                     </div>
                 </div>
 
                 <h3 class="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-100 pb-2">Make and model</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     <div>
-                        <label class="block text-sm font-medium text-slate-700">Brand *</label>
-                        <select name="brand_id" id="brandSelect" required {{ $disabled }}
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-sm font-medium text-slate-700">Brand *</label>
+                            <button type="button" onclick="openLookupModal('Brand')"
+                                class="text-blue-600 hover:text-blue-800 text-xs font-bold">+ New</button>
+                        </div>
+
+                        <select name="brand_id" id="Brand_select" required {{ $disabled }}
                             class="mt-1 w-full rounded-lg border-slate-300 shadow-sm text-sm focus:border-blue-500 focus:ring-blue-500">
                             <option value="">-- Select brand --</option>
                             @foreach ($brands as $brand)
@@ -68,8 +76,12 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700">Model *</label>
-                        <select name="model_id" id="modelSelect" required {{ $disabled }}
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-sm font-medium text-slate-700">Model *</label>
+                            <button type="button" onclick="openLookupModal('Model')"
+                                class="text-blue-600 hover:text-blue-800 text-xs font-bold">+ New</button>
+                        </div>
+                        <select name="model_id" id="Model_select" required {{ $disabled }}
                             class="mt-1 w-full rounded-lg border-slate-300 shadow-sm text-sm focus:border-blue-500 focus:ring-blue-500">
                             <option value="">-- Select brand first --</option>
                             @foreach ($models as $model)
@@ -81,11 +93,16 @@
                     </div>
                 </div>
 
-                <h3 class="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-100 pb-2">Hardware specifications</h3>
+                <h3 class="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-100 pb-2">Hardware
+                    specifications</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <div class="md:col-span-3">
-                        <label class="block text-sm font-medium text-slate-700">Processor</label>
-                        <select name="processor_id" {{ $disabled }}
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-sm font-medium text-slate-700">Processor *</label>
+                            <button type="button" onclick="openLookupModal('Processor')"
+                                class="text-blue-600 hover:text-blue-800 text-xs font-bold">+ New</button>
+                        </div>
+                        <select name="processor_id" id="Processor_select" {{ $disabled }}
                             class="mt-1 w-full rounded-lg border-slate-300 shadow-sm text-sm focus:border-blue-500 focus:ring-blue-500">
                             <option value="">-- Select --</option>
                             @foreach ($processors as $proc)
@@ -97,8 +114,12 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-slate-700">RAM capacity</label>
-                        <select name="ram_size_id" {{ $disabled }}
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-sm font-medium text-slate-700">RAM capacity*</label>
+                            <button type="button" onclick="openLookupModal('RamSize')"
+                                class="text-blue-600 hover:text-blue-800 text-xs font-bold">+ New</button>
+                        </div>
+                        <select name="ram_size_id" id="RamSize_select" {{ $disabled }}
                             class="mt-1 w-full rounded-lg border-slate-300 shadow-sm text-sm focus:border-blue-500 focus:ring-blue-500">
                             <option value="">-- Select --</option>
                             @foreach ($ramSizes as $ram)
@@ -121,8 +142,12 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700">Screen size</label>
-                        <select name="screen_size_id" {{ $disabled }}
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-sm font-medium text-slate-700">Screen size</label>
+                            <button type="button" onclick="openLookupModal('ScreenSize')"
+                                class="text-blue-600 hover:text-blue-800 text-xs font-bold">+ New</button>
+                        </div>
+                        <select name="screen_size_id" id="ScreenSize_select" {{ $disabled }}
                             class="mt-1 w-full rounded-lg border-slate-300 shadow-sm text-sm focus:border-blue-500 focus:ring-blue-500">
                             <option value="">-- Select --</option>
                             @foreach ($screenSizes as $screen)
@@ -134,8 +159,12 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-slate-700">Storage capacity</label>
-                        <select name="storage_size_id" {{ $disabled }}
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-sm font-medium text-slate-700">Storage capacity</label>
+                            <button type="button" onclick="openLookupModal('StorageSize')"
+                                class="text-blue-600 hover:text-blue-800 text-xs font-bold">+ New</button>
+                        </div>
+                        <select name="storage_size_id" id="StorageSize_select" {{ $disabled }}
                             class="mt-1 w-full rounded-lg border-slate-300 shadow-sm text-sm focus:border-blue-500 focus:ring-blue-500">
                             <option value="">-- Select --</option>
                             @foreach ($storageSizes as $storage)
@@ -159,15 +188,34 @@
                     </div>
                 </div>
 
-                <h3 class="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-100 pb-2">Status and media</h3>
+                <div id="lookupModal"
+                    class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm">
+                    <div class="bg-white rounded-xl p-6 shadow-xl w-80">
+                        <h3 class="text-sm font-bold text-slate-900 uppercase mb-4">Add <span id="lookupTitle"></span>
+                        </h3>
+                        <input type="hidden" id="lookupCategory">
+                        <input type="text" id="lookupValue"
+                            class="w-full rounded-lg border-slate-300 text-sm mb-4" placeholder="Enter value...">
+
+                        <div class="flex space-x-2">
+                            <button type="button" onclick="closeLookupModal()"
+                                class="flex-1 px-3 py-2 text-xs font-bold text-slate-600 bg-slate-100 rounded-lg">Cancel</button>
+                            <button type="button" onclick="submitLookup()"
+                                class="flex-1 px-3 py-2 text-xs font-bold text-white bg-blue-600 rounded-lg">Save</button>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-100 pb-2">Status and media
+                </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-6">
                         <div>
                             <label class="block text-sm font-medium text-slate-700">Purchase date *</label>
-                            <input type="date" name="purchase_date" 
-                                   max="{{ now()->format('Y-m-d') }}" 
-                                   value="{{ old('purchase_date', $laptop->purchase_date ? $laptop->purchase_date->format('Y-m-d') : now()->format('Y-m-d')) }}" 
-                                   required {{ $disabled }} class="mt-1 w-full rounded-lg border-slate-300 shadow-sm text-sm focus:border-blue-500 focus:ring-blue-500">
+                            <input type="date" name="purchase_date" max="{{ now()->format('Y-m-d') }}"
+                                value="{{ old('purchase_date', $laptop->purchase_date ? $laptop->purchase_date->format('Y-m-d') : now()->format('Y-m-d')) }}"
+                                required {{ $disabled }}
+                                class="mt-1 w-full rounded-lg border-slate-300 shadow-sm text-sm focus:border-blue-500 focus:ring-blue-500">
                         </div>
 
                         {{-- <div>
@@ -228,28 +276,135 @@
     </div>
 
     <script>
-        document.getElementById('brandSelect').addEventListener('change', function() {
-            const brandId = this.value;
-            const modelSelect = document.getElementById('modelSelect');
+        document.addEventListener('DOMContentLoaded', function() {
+            const faInput = document.getElementById('fa_code_input');
+            const suggestionContainer = document.getElementById('fa_suggestions');
 
-            modelSelect.innerHTML = '<option value="">Loading...</option>';
+            if (faInput && !faInput.value) { // Only suggest if input is empty (New Laptop)
+                fetch("{{ route('laptops.fa-suggestions') }}")
+                    .then(res => res.json())
+                    .then(suggestions => {
+                        if (suggestions.length > 0) {
+                            // 1. Auto-fill the first (most recent) suggestion
+                            faInput.value = suggestions[0];
 
-            if (!brandId) {
-                modelSelect.innerHTML = '<option value="">-- Select brand first --</option>';
-                return;
+                            // 2. Display all patterns as clickable badges
+                            suggestions.forEach((code, index) => {
+                                const badge = document.createElement('button');
+                                badge.type = 'button';
+                                badge.className =
+                                    "text-[10px] px-2 py-0.5 rounded-full border border-blue-200 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-colors font-mono";
+                                badge.innerText = `Suggest: ${code}`;
+                                badge.onclick = () => {
+                                    faInput.value = code;
+                                };
+                                suggestionContainer.appendChild(badge);
+                            });
+                        }
+                    });
+            }
+        });
+
+        // 1. Logic to filter Models when a Brand is selected
+        const brandDropdown = document.getElementById('Brand_select');
+        if (brandDropdown) {
+            brandDropdown.addEventListener('change', function() {
+                const brandId = this.value;
+                const modelSelect = document.getElementById('Model_select');
+
+                modelSelect.innerHTML = '<option value="">Loading...</option>';
+
+                if (!brandId) {
+                    modelSelect.innerHTML = '<option value="">-- Select brand first --</option>';
+                    return;
+                }
+
+                // Using your existing API endpoint
+                fetch(`/api/lookups/models/${brandId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        modelSelect.innerHTML = '<option value="">-- Select model --</option>';
+                        data.forEach(model => {
+                            const option = new Option(model.value, model.id);
+                            modelSelect.add(option);
+                        });
+                    })
+                    .catch(error => {
+                        modelSelect.innerHTML = '<option value="">Error loading models</option>';
+                    });
+            });
+        }
+
+        // 2. Open the modal for any category
+        function openLookupModal(category) {
+            document.getElementById('lookupCategory').value = category;
+            document.getElementById('lookupTitle').innerText = category.replace(/([A-Z])/g, ' $1').trim();
+            document.getElementById('lookupModal').classList.remove('hidden');
+            document.getElementById('lookupModal').classList.add('flex');
+            document.getElementById('lookupValue').focus();
+        }
+
+        function closeLookupModal() {
+            document.getElementById('lookupModal').classList.add('hidden');
+            document.getElementById('lookupModal').classList.remove('flex');
+            document.getElementById('lookupValue').value = '';
+        }
+
+        // 3. Submit the new entry via AJAX
+        async function submitLookup() {
+            const category = document.getElementById('lookupCategory').value;
+            const value = document.getElementById('lookupValue').value.trim();
+            let parentId = null;
+
+            if (!value) return;
+
+            // Ensure Models are linked to the currently selected Brand
+            if (category === 'Model') {
+                parentId = document.getElementById('Brand_select').value;
+                if (!parentId) {
+                    alert('Please select a Brand first before adding a new Model.');
+                    return;
+                }
             }
 
-            fetch(`/api/lookups/models/${brandId}`)
-                .then(response => response.json())
-                .then(data => {
-                    modelSelect.innerHTML = '<option value="">-- Select model --</option>';
-                    data.forEach(model => {
-                        modelSelect.innerHTML += `<option value="${model.id}">${model.value}</option>`;
-                    });
-                })
-                .catch(error => {
-                    modelSelect.innerHTML = '<option value="">Error loading models</option>';
+            try {
+                const response = await fetch("{{ route('lookups.quick-store') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        category: category,
+                        value: value,
+                        parent_id: parentId
+                    })
                 });
-        });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Find the select (e.g., "Processor_select")
+                    const selectId = category + '_select';
+                    const select = document.getElementById(selectId);
+
+                    if (select) {
+                        // Create and select the new option
+                        const newOption = new Option(data.value, data.id, true, true);
+                        select.add(newOption);
+
+                        // Manually trigger a change event in case other JS is watching
+                        select.dispatchEvent(new Event('change'));
+                    }
+
+                    closeLookupModal();
+                } else {
+                    alert(data.message || 'Error: This entry might already exist.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('A connection error occurred.');
+            }
+        }
     </script>
 </x-layout>

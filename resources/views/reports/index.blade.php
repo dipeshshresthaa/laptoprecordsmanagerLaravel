@@ -49,6 +49,7 @@
 
                 <div class="pb-3 shrink-0">
                     <a href="{{ route('reports.export_comprehensive', ['search' => $search]) }}"
+                        target="_blank"
                         class="inline-flex items-center px-4 py-2 border border-slate-300 shadow-sm text-xs font-bold rounded-lg text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-colors">
                         <svg class="mr-1.5 h-4 w-4 text-rose-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14v-4H8l4-4 4 4h-3v4h-2zm-3.5 2a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm9 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3z"/></svg>
                         Export comprehensive PDF
@@ -68,7 +69,7 @@
                         <tbody class="divide-y divide-slate-100">
                             @forelse($partners as $partner)
                                 <tr class="hover:bg-slate-50">
-                                    <td class="py-3 text-sm font-medium text-slate-900">{{ $partner->first_name }} {{ $partner->last_name }}</td>
+                                    <td class="py-3 text-sm font-medium text-slate-900">{{ $partner->full_name }}</td>
                                     <td class="py-3 text-sm text-slate-600">{{ $partner->department }}</td>
                                 </tr>
                             @empty
@@ -92,8 +93,8 @@
                         <tbody class="divide-y divide-slate-100">
                             @forelse($trainees as $trainee)
                                 <tr class="hover:bg-slate-50">
-                                    <td class="py-3 text-sm font-medium text-slate-900">{{ $trainee->first_name }} {{ $trainee->last_name }}</td>
-                                    <td class="py-3 text-sm text-slate-600">{{ $trainee->principal->first_name ?? 'Unassigned' }} {{ $trainee->principal->last_name ?? '' }}</td>
+                                    <td class="py-3 text-sm font-medium text-slate-900">{{ $trainee->full_name }}</td>
+                                    <td class="py-3 text-sm text-slate-600">{{ $trainee->principal->full_name ?? 'Unassigned'}}</td>
                                     <td class="py-3 text-sm text-slate-600">{{ $trainee->department }}</td>
                                 </tr>
                             @empty
@@ -117,7 +118,7 @@
                         <tbody class="divide-y divide-slate-100">
                             @forelse($principalStats as $stat)
                                 <tr class="hover:bg-slate-50">
-                                    <td class="py-3 text-sm font-medium text-slate-900">{{ $stat->principal->first_name ?? 'Unknown' }} {{ $stat->principal->last_name ?? '' }}</td>
+                                    <td class="py-3 text-sm font-medium text-slate-900">{{ $stat->principal->full_name ?? 'Unknown' }}</td>
                                     <td class="py-3 text-sm text-slate-600">
                                         <span class="bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-0.5 rounded-full">{{ $stat->trainee_count }}</span>
                                     </td>
@@ -151,10 +152,10 @@
                             @forelse($totalStaff as $staff)
                                 <tr class="hover:bg-slate-50 transition-colors">
                                     <td class="py-3 text-sm font-bold text-slate-900">
-                                        {{ $staff->first_name }} {{ $staff->last_name }}
-                                        <div class="text-xs text-slate-500 font-normal mt-0.5">Assigned to: {{ $staff->principal ? $staff->principal->first_name . ' ' . $staff->principal->last_name : 'None' }}</div>
+                                        {{ $staff->full_name }}
+                                        <div class="text-xs text-slate-500 font-normal mt-0.5">Assigned to: {{ $staff->principal ? $staff->principal->full_name : 'None' }}</div>
                                     </td>
-                                    <td class="py-3 text-sm font-medium text-slate-600">{{ $staff->role }}</td>
+                                    <td class="py-3 text-sm font-medium text-slate-600">{{ $staff->role_display }}</td>
                                     <td class="py-3 text-sm text-slate-600">{{ $staff->department ?? '-' }}</td>
                                     <td class="py-3 text-sm">
                                         @if ($staff->is_active)

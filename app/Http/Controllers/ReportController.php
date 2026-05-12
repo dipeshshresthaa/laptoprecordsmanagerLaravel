@@ -27,18 +27,33 @@ class ReportController extends Controller
             }
         };
 
-        $partners = Employee::query()->where('role', 'Partner')->where($applyFilters)->orderBy('first_name', 'asc')->get();
-        $trainees = Employee::with('principal')->where('role', 'ArticleTrainee')->where($applyFilters)->orderBy('first_name','asc')->get();
+        $employees = Employee::query()->where('emp_code', '!=', 'ADMIN001');
+        $employeesWithPrincipals = $employees->with('principal');
 
-        $principalStats = Employee::query()->where('principal_id', '<>', null)
-            ->where('role', 'ArticleTrainee')->where($applyFilters)
+        $partners = $employees->where('role', 'Partner')->where($applyFilters)->orderBy('first_name', 'asc')->get();
+        $trainees = Employee::with('principal')->where('role', 'ArticleTrainee')->where($applyFilters)->orderBy('employment_date', 'asc')->orderBy('full_name', 'asc')->get();
+
+        $principalStats = Employee::query()
+            ->whereNotNull('principal_id')
+            ->where('role', 'ArticleTrainee')
+            ->where($applyFilters)
             ->select('principal_id', DB::raw('count(*) as trainee_count'))
-            ->with('principal')->groupBy('principal_id')->get();
+            ->with('principal')
+            ->groupBy('principal_id')
+            ->get() // Execute query first
+            ->sortBy(function ($stat) {
+                // Sort the resulting collection by the principal's name
+                return $stat->principal?->first_name ?? 'ZZZ';
+            })
+            ->values(); // Reset array keys
+
+
 
         // NEW: Total Staff List (Ignores active/left toggle, respects search)
-        $totalStaffQuery = Employee::with('principal') ->orderBy('role', 'desc')
+        $totalStaffQuery = Employee::with('principal')->where('emp_code', '!=', 'ADMIN001')
             ->orderBy('is_active', 'desc')       // 1. Active staff (1) first, then Left staff (0)
-            ->orderBy('employment_date', 'desc') // 2. Date of employment descending (Newest first)
+            ->orderBy('role', 'desc')
+            ->orderBy('employment_date', 'asc') // 2. Date of employment descending (Newest first)
             ->orderBy('first_name', 'asc')       // 3. First name ascending (A-Z)
             ->orderBy('last_name', 'asc');;
         if ($search) {
@@ -59,12 +74,12 @@ class ReportController extends Controller
         $search = $request->input('search');
 
         // Base Query: Respects the search bar, but ignores active/left toggle so we get everyone
-        $baseQuery = Employee::with('principal')
-            ->orderBy('role', 'desc')
+        $baseQuery = Employee::with('principal')->Where('emp_code', '!=', 'ADMIN001')
             ->orderBy('is_active', 'desc')       // 1. Active staff (1) first, then Left staff (0)
+            ->orderBy('role', 'desc')
             ->orderBy('employment_date', 'desc') // 2. Date of employment descending (Newest first)
-            ->orderBy('first_name', 'asc')       // 3. First name ascending (A-Z)
-            ->orderBy('last_name', 'asc');       // 4. Last name ascending (A-Z)
+            ->orderBy('full_name', 'asc')       // 3. First name ascending (A-Z)
+        ;
 
         if ($search) {
             $baseQuery->where(function ($q) use ($search) {
@@ -81,12 +96,25 @@ class ReportController extends Controller
         $leftStaff = (clone $baseQuery)->where('is_active', false)->get();
 
         // 3. Principal-wise Trainees (Group only the active trainees by their principal)
-        $activeTrainees = (clone $baseQuery)->where('role', 'ArticleTrainee')->where('is_active', true)->get();
+        $activeTrainees = (clone $baseQuery)
+            ->where('role', 'ArticleTrainee')
+            ->where('is_active', true)
+            ->orderBy('joining_date', 'asc')
+            ->orderBy('first_name', 'asc') // Sort trainees within the group
+            ->get();
+
+        // 2. Group them by Principal
         $principalGroups = $activeTrainees->groupBy('principal_id');
 
-        // Fetch the actual Principal models so we can print their names
+        // 3. Fetch Principal models
         $validPrincipalIds = $principalGroups->keys()->filter()->toArray();
         $allPrincipals = Employee::whereIn('id', $validPrincipalIds)->get()->keyBy('id');
+
+        // 4. (Optional) Re-sort the groups to match the alphabetical Principal order
+        $principalGroups = $principalGroups->sortBy(function ($trainees, $principalId) use ($allPrincipals) {
+            $principal = $allPrincipals->get($principalId);
+            return $principal ? $principal->first_name : 'ZZZ';
+        });
 
         // 4. Overall Staff (Master Roster)
         $totalStaff = (clone $baseQuery)->get();
@@ -100,7 +128,7 @@ class ReportController extends Controller
             'search'
         ), [], 'UTF-8');
 
-        return $pdf->download('Comprehensive_Firm_Report_' . now()->format('Ymd') . '.pdf');
+        return $pdf->stream('Comprehensive_Firm_Report_' . now()->format('Ymd') . '.pdf');
     }
 
     public function getTraineesByPrincipal(Request $request, $principalId)
@@ -112,7 +140,7 @@ class ReportController extends Controller
         $trainees = Employee::query()->where('principal_id', $principalId)
             ->where('role', 'ArticleTrainee')
             ->where('is_active', $isActive)
-            ->select('id', 'first_name', 'last_name', 'department')
+            // ->select('id', 'first_name', 'last_name','full_name', 'department')
             ->orderBy('first_name', 'asc')
             ->get();
 

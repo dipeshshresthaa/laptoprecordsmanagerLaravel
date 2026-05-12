@@ -33,7 +33,7 @@ class EmployeeController extends Controller
         }
 
         // Sort alphabetically by first name
-        $employees = $query->where('emp_code', '!=', 'ADMIN001')->orderBy('is_active', 'desc')->orderBy('role', 'desc')->orderBy('first_name', 'asc')->get();
+        $employees = $query->where('emp_code', '!=', 'ADMIN001')->orderBy('is_active', 'desc')->orderBy('role', 'desc')->orderBy('full_name', 'asc')->get();
 
         return view('employees.index', compact('employees', 'showLeftEmployees'));
     }
@@ -67,7 +67,7 @@ class EmployeeController extends Controller
             if ($employee->articleship_deed_path) {
                 Storage::disk('public')->delete($employee->articleship_deed_path);
             }
-            $fileName = $employee->emp_code.'_Deed_'.time().'.pdf';
+            $fileName = $employee->emp_code . '_Deed_' . time() . '.pdf';
             $employee->articleship_deed_path = $request->file('articleship_deed')->storeAs($docsDir, $fileName, 'public');
             $uploadedCount++;
         }
@@ -76,7 +76,7 @@ class EmployeeController extends Controller
             if ($employee->articleship_completion_path) {
                 Storage::disk('public')->delete($employee->articleship_completion_path);
             }
-            $fileName = $employee->emp_code.'_Completion_'.time().'.pdf';
+            $fileName = $employee->emp_code . '_Completion_' . time() . '.pdf';
             $employee->articleship_completion_path = $request->file('articleship_completion')->storeAs($docsDir, $fileName, 'public');
             $uploadedCount++;
         }
@@ -230,7 +230,7 @@ class EmployeeController extends Controller
                 }
 
                 // 2. Generate clean filename: EMP-001_Deed_1715525413.pdf
-                $fileName = $employee->emp_code.'_Deed_'.time().'.pdf';
+                $fileName = $employee->emp_code . '_Deed_' . time() . '.pdf';
 
                 // 3. Store in storage/app/public/employee_documents
                 $path = $request->file('articleship_deed')->storeAs('employee_documents', $fileName, 'public');
@@ -290,7 +290,7 @@ class EmployeeController extends Controller
                 Storage::disk('public')->delete($employee->completion_certificate_path);
             }
 
-            $fileName = $employee->emp_code.'_Completion_'.time().'.pdf';
+            $fileName = $employee->emp_code . '_Completion_' . time() . '.pdf';
             $employee->completion_certificate_path = $request->file('certificate')->storeAs('employee_documents', $fileName, 'public');
         }
 
@@ -336,11 +336,11 @@ class EmployeeController extends Controller
             $query->where('is_active', true);
         }
 
-        $employees = $query->orderBy('first_name', 'asc')->get();
+        $employees = $query->where('emp_code', '!=', 'ADMIN001')->orderBy('is_active', 'desc')->orderBy('role', 'desc')->orderBy('full_name', 'asc')->get();
 
         $pdf = Pdf::loadView('employees.pdf', compact('employees', 'showLeftEmployees'));
 
-        $fileName = 'Employee_Report_'.date('Y-m-d').'.pdf';
+        $fileName = 'Employee_Report_' . date('Y-m-d') . '.pdf';
 
         return $pdf->download($fileName);
     }

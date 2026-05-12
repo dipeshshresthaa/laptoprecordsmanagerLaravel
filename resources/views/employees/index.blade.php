@@ -9,67 +9,67 @@
                 </p>
             </div>
 
-            <div class="flex flex-col md:flex-row flex-wrap items-start md:items-center gap-3">
 
-                <form action="{{ route('employees.index') }}" method="GET"
-                    class="flex flex-row items-center gap-3 w-full md:w-auto">
+        </div>
 
-                    <div class="relative flex-1 md:w-64">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                            </svg>
-                        </div>
-                        <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Search employees..."
-                            class="block w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg leading-5 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm transition-colors shadow-sm">
-                    </div>
+        <div class="flex flex-col md:flex-row flex-wrap items-start md:items-center md:justify-between mb-8 gap-3">
 
-                    <label
-                        class="flex items-center justify-center bg-white border border-slate-300 rounded-lg px-3 py-2 shadow-sm cursor-pointer hover:bg-slate-50 transition-colors shrink-0 h-[38px]">
-                        <input type="checkbox" name="show_left_employees" value="1" onchange="this.form.submit()"
-                            {{ $showLeftEmployees ? 'checked' : '' }}
-                            class="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500 transition-colors">
-                        <span class="ml-2 text-sm font-medium text-slate-700">Show inactive</span>
-                    </label>
-                    <button type="submit" class="hidden"></button>
-                </form>
+            <form action="{{ route('employees.index') }}" method="GET"
+                class="flex flex-row items-center gap-3 w-full md:w-auto">
 
-                <div class="flex flex-row flex-wrap items-center gap-3 w-full md:w-auto">
-
-                    <a href="{{ route('employees.export.pdf', ['show_left_employees' => request('show_left_employees')]) }}"
-                        class="inline-flex items-center justify-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-lg shadow-sm text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-colors shrink-0 h-[38px]">
-                        <svg class="mr-2 -ml-1 w-4 h-4 text-rose-500" fill="currentColor" viewBox="0 0 24 24">
-                            <path
-                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14v-4H8l4-4 4 4h-3v4h-2zm-3.5 2a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm9 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" />
-                        </svg>
-                        Export PDF
-                    </a>
-
-                    @if (Auth::check() && Auth::user()->is_admin)
-                        <a href="{{ route('admin.employees.import') }}"
-                            class="inline-flex items-center justify-center px-4 py-2 border border-slate-300 shadow-sm text-sm font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors shrink-0 h-[38px]">
-                            <svg class="mr-2 -ml-1 w-4 h-4 text-slate-500" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
-                            </svg>
-                            Bulk upload
-                        </a>
-                    @endif
-
-                    <a href="{{ route('employees.create') }}"
-                        class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all shrink-0">
-                        <svg class="mr-2 -ml-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="relative flex-1 md:w-64">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
-                        Add employee
-                    </a>
+                    </div>
+                    <input type="text" name="search" value="{{ request('search') }}"
+                        placeholder="Search employees..."
+                        class="block w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg leading-5 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm transition-colors shadow-sm">
                 </div>
 
+                <label
+                    class="flex items-center justify-center bg-white border border-slate-300 rounded-lg px-3 py-2 shadow-sm cursor-pointer hover:bg-slate-50 transition-colors shrink-0 h-[38px]">
+                    <input type="checkbox" name="show_left_employees" value="1" onchange="this.form.submit()"
+                        {{ $showLeftEmployees ? 'checked' : '' }}
+                        class="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500 transition-colors">
+                    <span class="ml-2 text-sm font-medium text-slate-700">Show inactive</span>
+                </label>
+                <button type="submit" class="hidden"></button>
+            </form>
+
+            <div class="flex flex-row flex-wrap items-center gap-3 w-full md:w-auto">
+
+                <a href="{{ route('employees.export.pdf', ['show_left_employees' => request('show_left_employees')]) }}"
+                    class="inline-flex items-center justify-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-lg shadow-sm text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-colors shrink-0 h-[38px]">
+                    <svg class="mr-2 -ml-1 w-4 h-4 text-rose-500" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14v-4H8l4-4 4 4h-3v4h-2zm-3.5 2a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm9 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" />
+                    </svg>
+                    Export PDF
+                </a>
+
+                @if (Auth::check() && Auth::user()->is_admin)
+                    <a href="{{ route('admin.employees.import') }}"
+                        class="inline-flex items-center justify-center px-4 py-2 border border-slate-300 shadow-sm text-sm font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors shrink-0 h-[38px]">
+                        <svg class="mr-2 -ml-1 w-4 h-4 text-slate-500" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                        </svg>
+                        Bulk upload
+                    </a>
+                @endif
+
+                <a href="{{ route('employees.create') }}"
+                    class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all shrink-0">
+                    <svg class="mr-2 -ml-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    Add employee
+                </a>
             </div>
         </div>
 
@@ -115,25 +115,9 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    @php
-                                        $roleDisplay = match ($emp->role) {
-                                            'ArticleTrainee' => 'Article trainee',
-                                            'Partner' => 'Partner',
-                                            'Other' => 'Other',
-                                            default => $emp->role,
-                                        };
-
-                                        $roleClasses = match ($emp->role) {
-                                            'ArticleTrainee' => 'bg-blue-100 text-blue-800 border-blue-200',
-                                            'Partner' => 'bg-purple-100 text-purple-800 border-purple-200',
-                                            'Other' => 'bg-slate-100 text-slate-800 border-slate-200',
-                                            default => 'bg-slate-100 text-slate-800 border-slate-200',
-                                        };
-                                    @endphp
-
                                     <span
-                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border {{ $roleClasses }}">
-                                        {{ $roleDisplay }}
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border {{ $emp->role_badge_classes }}">
+                                        {{ $emp->role_display }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
