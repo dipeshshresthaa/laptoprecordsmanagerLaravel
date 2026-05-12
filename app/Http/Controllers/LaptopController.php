@@ -187,7 +187,7 @@ class LaptopController extends Controller
                     'type' => 'Return',
                     'icon' => '↩️',
                     'color' => 'bg-amber-100 text-amber-600',
-                    'title' => "Returned by {$assignment->employee->first_name}",
+                    'title' => "Returned by {$assignment->employee->first_name} {$assignment->employee->last_name}",
                     'details' => "Condition: {$assignment->return_condition}. Notes: {$assignment->return_reason}",
                 ]);
             }

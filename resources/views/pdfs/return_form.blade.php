@@ -10,7 +10,7 @@
         }
 
         body {
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-family: Calibri;
             font-size: 12px;
             color: #1e293b;
             line-height: 1.5;
@@ -108,7 +108,7 @@
         /* Signatures */
         .signature-container {
             width: 100%;
-            margin-top: 50px;
+            margin-top: 100px;
             page-break-inside: avoid;
         }
 
@@ -118,6 +118,7 @@
 
         .sig-line {
             border-top: 1px solid #0f172a;
+            margin-right: 180px;
             margin-bottom: 8px;
             padding-top: 4px;
         }

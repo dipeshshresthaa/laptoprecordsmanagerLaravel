@@ -8,6 +8,7 @@ use App\Http\Controllers\LaptopController;
 use App\Http\Controllers\LaptopDisposalController;
 use App\Http\Controllers\LaptopRepairController;
 use App\Http\Controllers\LaptopUpgradeController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SystemLookupController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -78,6 +79,12 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('laptops/{laptop}/history', [LaptopController::class, 'show'])->name('laptops.history');
         Route::get('laptops/{laptop}/history/pdf', [LaptopController::class, 'downloadHistoryPdf'])->name('laptops.history.pdf');
+
+        Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+        Route::get('/reports/api/principal/{id}/trainees', [ReportController::class, 'getTraineesByPrincipal'])
+            ->name('reports.api.trainees'); // <-- Add this name
+
+        Route::get('/reports/export-comprehensive', [ReportController::class, 'downloadComprehensivePdf'])->name('reports.export_comprehensive');
 
         // Employees
         Route::get('employees/{employee}/deed', [EmployeeController::class, 'viewDeed'])->name('employees.deed');

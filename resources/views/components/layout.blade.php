@@ -163,6 +163,11 @@
                                     Users
                                 </a>
                             @endif
+
+                            <a href="{{ route('reports.index') }}"
+                                class="text-slate-600 hover:bg-slate-50 hover:text-slate-900 group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                                Firm reports
+                            </a>
                         </div>
                     </div>
 

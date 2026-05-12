@@ -6,7 +6,17 @@
                 <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Laptop inventory</h2>
                 <p class="mt-1 text-sm text-slate-500">Manage company hardware, specifications, and lifecycles.</p>
             </div>
-            <div class="mt-4 sm:mt-0">
+            
+            <div class="mt-4 sm:mt-0 flex items-center space-x-3">
+                
+                @if (session('receipt_url'))
+                    <a href="{{ session('receipt_url') }}" target="_blank" 
+                        class="inline-flex items-center justify-center px-4 py-2 border border-emerald-200 text-sm font-bold rounded-lg shadow-sm text-emerald-800 bg-emerald-50 hover:bg-emerald-100 focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all">
+                        <svg class="mr-2 -ml-1 w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        Print last receipt
+                    </a>
+                @endif
+
                 <a href="{{ route('laptops.create') }}"
                     class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all">
                     <svg class="mr-2 -ml-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -299,22 +309,4 @@
             }
         });
     </script>
-
-    @if (session('download_return_pdf'))
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                // Using location.href safely bypasses browser pop-up blockers
-                window.location.href = "{!! session('download_return_pdf') !!}";
-            });
-        </script>
-    @endif
-
-    @if (session('download_assign_pdf'))
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                // Using location.href safely bypasses browser pop-up blockers
-                window.location.href = "{!! session('download_assign_pdf') !!}";
-            });
-        </script>
-    @endif
 </x-layout>

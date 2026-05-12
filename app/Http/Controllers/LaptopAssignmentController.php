@@ -34,7 +34,7 @@ class LaptopAssignmentController extends Controller
     {
         $request->validate([
             'employee_id' => 'required|exists:employees,id',
-            'assigned_date' => 'required|date|before_or_equal:today|after_or_equal:'.$laptop->purchase_date->format('Y-m-d'),
+            'assigned_date' => 'required|date|before_or_equal:today|after_or_equal:' . $laptop->purchase_date->format('Y-m-d'),
         ]);
 
         // 1. Create the Assignment Record
@@ -50,7 +50,7 @@ class LaptopAssignmentController extends Controller
         // 3. Redirect back with a command to auto-download the PDF
         return redirect()->route('laptops.index')
             ->with('success', 'Laptop assigned successfully.')
-            ->with('download_assign_pdf', route('assignments.assign_pdf', $assignment->id));
+            ->with('receipt_url', route('assignments.assign_pdf', $assignment->id));
     }
 
     // --- RETURN MODE ---
@@ -71,7 +71,7 @@ class LaptopAssignmentController extends Controller
 
         $request->validate([
             // ADDED: before_or_equal:today
-            'returned_date' => 'required|date|before_or_equal:today|after_or_equal:'.$activeAssignment->assigned_date->format('Y-m-d'),
+            'returned_date' => 'required|date|before_or_equal:today|after_or_equal:' . $activeAssignment->assigned_date->format('Y-m-d'),
             'return_condition' => 'required|string',
             'return_reason' => 'nullable|string',
             'next_status' => 'required|in:Available,In repair,Disposed',
@@ -90,26 +90,26 @@ class LaptopAssignmentController extends Controller
 
         return redirect()->route('laptops.index')
             ->with('success', 'Laptop returned successfully.')
-            ->with('download_return_pdf', route('assignments.return_pdf', $activeAssignment->id));
+            ->with('receipt_url', route('assignments.return_pdf', $activeAssignment->id));
     }
 
     public function downloadAssignPdf(LaptopAssignment $assignment)
     {
         $assignment->load(['laptop.brand', 'laptop.model', 'laptop.processor', 'laptop.ramSize', 'laptop.storageSize', 'laptop.screenSize', 'employee', 'assignedBy']);
         $pdf = Pdf::loadView('pdfs.assignment_form', compact('assignment'));
-        $filename = "Assignment-{$assignment->employee->first_name}-{$assignment->employee->last_name}-".now()->format('YmdHis').'.pdf';
+        $filename = "Assignment-{$assignment->employee->first_name}-{$assignment->employee->last_name}-" . now()->format('YmdHis') . '.pdf';
 
         // CHANGED from stream() to download()
-        return $pdf->download($filename);
+        return $pdf->stream($filename);
     }
 
     public function downloadReturnPdf(LaptopAssignment $assignment)
     {
         $assignment->load(['laptop.brand', 'laptop.model', 'laptop.processor', 'laptop.ramSize', 'laptop.storageSize', 'laptop.screenSize', 'employee', 'returnedBy']);
         $pdf = Pdf::loadView('pdfs.return_form', compact('assignment'));
-        $filename = "Return_{$assignment->employee->first_name}_{$assignment->employee->last_name}_".now()->format('YmdHis').'.pdf';
+        $filename = "Return_{$assignment->employee->first_name}_{$assignment->employee->last_name}_" . now()->format('YmdHis') . '.pdf';
 
         // CHANGED from stream() to download()
-        return $pdf->download($filename);
+        return $pdf->stream($filename);
     }
 }

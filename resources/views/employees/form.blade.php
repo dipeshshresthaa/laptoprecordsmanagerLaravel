@@ -79,14 +79,14 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 14l9-5-9-5-9 5 9 5zm0 0v6"></path>
                         </svg>
-                        Trainee Specific Details
+                        Trainee specific details
                     </h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Assigned Principal *</label>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Assigned principal *</label>
                             <select name="principal_id"
                                 class="w-full rounded-lg border-blue-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
-                                <option value="">Select a Principal</option>
+                                <option value="">Select a principal</option>
                                 @foreach ($potentialPrincipals as $principal)
                                     <option value="{{ $principal->id }}"
                                         {{ old('principal_id', $employee->principal_id) == $principal->id ? 'selected' : '' }}>
@@ -100,7 +100,7 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Articleship Deed (PDF)</label>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Articleship deed (PDF)</label>
 
                             @if (!empty($employee->articleship_deed_pdf))
                                 <div class="mb-3 flex items-center p-3 bg-green-50 rounded-lg border border-green-100">
