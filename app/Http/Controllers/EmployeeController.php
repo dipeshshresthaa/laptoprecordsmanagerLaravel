@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
+use App\Models\LaptopAssignment;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 
 class EmployeeController extends Controller
@@ -18,7 +19,7 @@ class EmployeeController extends Controller
         $query = Employee::query();
 
         // Handle Active/Inactive Toggle
-        if (!$showLeftEmployees) {
+        if (! $showLeftEmployees) {
             $query->where('is_active', true);
         }
 
@@ -32,16 +33,67 @@ class EmployeeController extends Controller
         }
 
         // Sort alphabetically by first name
-        $employees = $query->orderBy('first_name', 'asc')->get();
+        $employees = $query->where('emp_code', '!=', 'ADMIN001')->orderBy('is_active', 'desc')->orderBy('role', 'desc')->orderBy('first_name', 'asc')->get();
 
         return view('employees.index', compact('employees', 'showLeftEmployees'));
     }
 
+    public function show(Employee $employee)
+    {
+        // Eager load relationships to prevent N+1 query issues
+        $employee->load(['principal', 'trainees']);
+
+        // Fetch their laptop assignments (both active and returned)
+        $assignments = LaptopAssignment::with(['laptop.brand', 'laptop.model'])
+            ->where('employee_id', $employee->id)
+            ->latest('assigned_date')
+            ->get();
+
+        return view('employees.show', compact('employee', 'assignments'));
+    }
+
+    // The Upload Method (Handles individual PDF uploads from profile)
+    public function uploadDocuments(Request $request, Employee $employee)
+    {
+        $request->validate([
+            'articleship_deed' => 'nullable|mimes:pdf|max:10240',
+            'articleship_completion' => 'nullable|mimes:pdf|max:10240',
+        ]);
+
+        $docsDir = 'employee_documents';
+        $uploadedCount = 0;
+
+        if ($request->hasFile('articleship_deed')) {
+            if ($employee->articleship_deed_path) {
+                Storage::disk('public')->delete($employee->articleship_deed_path);
+            }
+            $fileName = $employee->emp_code.'_Deed_'.time().'.pdf';
+            $employee->articleship_deed_path = $request->file('articleship_deed')->storeAs($docsDir, $fileName, 'public');
+            $uploadedCount++;
+        }
+
+        if ($request->hasFile('articleship_completion')) {
+            if ($employee->articleship_completion_path) {
+                Storage::disk('public')->delete($employee->articleship_completion_path);
+            }
+            $fileName = $employee->emp_code.'_Completion_'.time().'.pdf';
+            $employee->articleship_completion_path = $request->file('articleship_completion')->storeAs($docsDir, $fileName, 'public');
+            $uploadedCount++;
+        }
+
+        if ($uploadedCount > 0) {
+            $employee->save();
+
+            return back()->with('success', "Successfully uploaded {$uploadedCount} document(s).");
+        }
+
+        return back()->with('error', 'No valid PDF documents were selected.');
+    }
+
     public function create()
     {
-        $potentialPrincipals = Employee::query()->where('role', 'Partner')->get();
+        $potentialPrincipals = Employee::query()->where('role', 'Partner')->where('emp_code', '!=', 'ADMIN001')->get();
 
-        // Explicitly call get() to convert the query to a Collection for Intelephense
         $bankNames = Employee::query()
             ->whereNotNull('bank_name', 'and')
             ->where('bank_name', '!=', '')
@@ -56,7 +108,7 @@ class EmployeeController extends Controller
             ->get(['bank_branch'])
             ->pluck('bank_branch');
 
-        $employee = new Employee();
+        $employee = new Employee;
 
         return view('employees.form', compact('potentialPrincipals', 'bankNames', 'bankBranches', 'employee'));
     }
@@ -65,7 +117,6 @@ class EmployeeController extends Controller
     {
         $validated = $this->validateEmployee($request);
 
-        // Check for unique emp_code manually to match your C# specific error handling
         if (Employee::query()->where('emp_code', $validated['emp_code'])->exists()) {
             return back()->withInput()->withErrors(['emp_code' => 'Employee code already exists.']);
         }
@@ -82,13 +133,12 @@ class EmployeeController extends Controller
 
     public function edit(Employee $employee)
     {
-        if (!$employee->is_active) {
+        if (! $employee->is_active) {
             return redirect()->route('employees.index')->with('error', 'This record is locked because the employee has left the company. To edit details, you must first reactivate their employment.');
         }
 
         $potentialPrincipals = Employee::query()->where('role', 'Partner')->where('id', '!=', $employee->id)->get();
 
-        // Explicitly call get() to convert the query to a Collection for Intelephense
         $bankNames = Employee::query()
             ->whereNotNull('bank_name', 'and')
             ->where('bank_name', '!=', '')
@@ -122,7 +172,16 @@ class EmployeeController extends Controller
 
     public function destroy(Employee $employee)
     {
+        // Clean up files before deleting the user!
+        if ($employee->articleship_deed_path) {
+            Storage::disk('public')->delete($employee->articleship_deed_path);
+        }
+        if ($employee->articleship_completion_path) {
+            Storage::disk('public')->delete($employee->articleship_completion_path);
+        }
+
         Employee::destroy($employee->id);
+
         return redirect()->route('employees.index')->with('success', "{$employee->first_name} deleted successfully.");
     }
 
@@ -151,11 +210,10 @@ class EmployeeController extends Controller
             'cit_number' => 'nullable|string',
             'role' => 'required|string',
             'principal_id' => 'required_if:role,ArticleTrainee',
-            'articleship_deed_pdf' => 'nullable|file|mimes:pdf|max:5120',
+            // 'articleship_deed' => 'nullable|file|mimes:pdf|max:10240', // Unified name to match path logic
         ], [
             'principal_id.required_if' => 'An article trainee must have a principal assigned.',
-            // Add the custom message here:
-            'bank_account_number.unique' => 'The bank account number is already in use by some employee. Confirm the bank account number again.'
+            'bank_account_number.unique' => 'The bank account number is already in use by some employee. Confirm the bank account number again.',
         ]);
     }
 
@@ -164,51 +222,86 @@ class EmployeeController extends Controller
         if ($employee->role === 'ArticleTrainee') {
             $employee->principal_id = $request->input('principal_id');
 
-            // If a new file is uploaded, convert it to a byte array and store it
-            if ($request->hasFile('articleship_deed_pdf')) {
-                $file = $request->file('articleship_deed_pdf');
+            // Check if a file was uploaded through the main form
+            if ($request->hasFile('articleship_deed')) {
+                // 1. Delete old file from storage if it exists (Cleanup)
+                if ($employee->articleship_deed_path) {
+                    Storage::disk('public')->delete($employee->articleship_deed_path);
+                }
 
-                // file_get_contents reads the raw binary data (equivalent to byte[])
-                $employee->articleship_deed_pdf = file_get_contents($file->getRealPath());
+                // 2. Generate clean filename: EMP-001_Deed_1715525413.pdf
+                $fileName = $employee->emp_code.'_Deed_'.time().'.pdf';
+
+                // 3. Store in storage/app/public/employee_documents
+                $path = $request->file('articleship_deed')->storeAs('employee_documents', $fileName, 'public');
+
+                // 4. Save the PATH (string) to the database
+                $employee->articleship_deed_path = $path;
             }
         } else {
+            // If they are no longer a Trainee, clear their principal
             $employee->principal_id = null;
-            $employee->articleship_deed_pdf = null;
         }
     }
 
     public function viewDeed(Employee $employee)
     {
-        // Check if the binary column has data
-        if (empty($employee->articleship_deed_pdf)) {
+        // Check if the file actually exists on the disk
+        if (empty($employee->articleship_deed_path) || ! Storage::disk('public')->exists($employee->articleship_deed_path)) {
             abort(404, 'Document not found.');
         }
 
-        // Stream the binary data back to the browser as a PDF
-        return response($employee->articleship_deed_pdf, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="ArticleshipDeed_' . $employee->emp_code . '.pdf"'
-        ]);
+        // Get the absolute physical path to make Intelephense happy
+        $fullPath = Storage::disk('public')->path($employee->articleship_deed_path);
+
+        // Return the file safely using the global response helper
+        return response()->file($fullPath);
     }
 
     public function showMarkLeftForm(Employee $employee)
     {
-        // 1. Check if they are trying to offboard themselves
-        if (\Illuminate\Support\Facades\Auth::user()->employee_id === $employee->id) {
+        if (Auth::user()->employee_id === $employee->id) {
             return redirect()->route('employees.index')->with('error', 'Action denied: You cannot offboard yourself.');
         }
 
-        if (!$employee->is_active) {
+        if (! $employee->is_active) {
             return redirect()->route('employees.index')->with('error', 'This employee has already been marked as left.');
         }
 
         return view('employees.mark-left', compact('employee'));
     }
 
+    public function upgradeTrainee(Request $request, Employee $employee)
+    {
+        $request->validate([
+            'new_designation' => 'required|string|max:255',
+            'completion_date' => 'required|date|before_or_equal:today',
+            'certificate' => 'nullable|mimes:pdf|max:10240',
+        ]);
+
+        $employee->role = 'Other'; // Upgrading out of trainee status
+        $employee->designation = $request->new_designation;
+        $employee->articleship_completion_date = $request->completion_date;
+        $employee->principal_id = null; // No longer needs a principal
+
+        if ($request->hasFile('certificate')) {
+            // Cleanup old certificate if exists
+            if ($employee->completion_certificate_path) {
+                Storage::disk('public')->delete($employee->completion_certificate_path);
+            }
+
+            $fileName = $employee->emp_code.'_Completion_'.time().'.pdf';
+            $employee->completion_certificate_path = $request->file('certificate')->storeAs('employee_documents', $fileName, 'public');
+        }
+
+        $employee->save();
+
+        return redirect()->route('employees.index')->with('success', "{$employee->first_name} has been upgraded to {$employee->designation}!");
+    }
+
     public function processMarkLeft(Request $request, Employee $employee)
     {
-        // 1. Check if they are trying to offboard themselves (prevents bypassing UI)
-        if (\Illuminate\Support\Facades\Auth::user()->employee_id === $employee->id) {
+        if (Auth::user()->employee_id === $employee->id) {
             return redirect()->route('employees.index')->with('error', 'Action denied: You cannot offboard yourself.');
         }
 
@@ -216,13 +309,13 @@ class EmployeeController extends Controller
             'exit_date' => 'required|date|before_or_equal:9999-12-31',
             'reason' => 'required|string|max:255',
         ], [
-            'reason.required' => 'Please provide a reason (e.g., Resigned, Terminated).'
+            'reason.required' => 'Please provide a reason (e.g., Resigned, Terminated).',
         ]);
 
         $employee->is_active = false;
         $employee->exit_date = $request->exit_date;
         $employee->exit_reason = $request->reason;
-        $employee->modified_by_id = \Illuminate\Support\Facades\Auth::id();
+        $employee->modified_by_id = Auth::id();
         $employee->save();
 
         if ($request->boolean('deactivate_user') && $employee->userAccount) {
@@ -239,19 +332,16 @@ class EmployeeController extends Controller
 
         $query = Employee::query();
 
-        // Match the UI filtering
-        if (!$showLeftEmployees) {
+        if (! $showLeftEmployees) {
             $query->where('is_active', true);
         }
 
-        // Sort alphabetically
         $employees = $query->orderBy('first_name', 'asc')->get();
 
-        // Load the specialized PDF Blade view
         $pdf = Pdf::loadView('employees.pdf', compact('employees', 'showLeftEmployees'));
 
-        // Download the file
-        $fileName = 'Employee_Report_' . date('Y-m-d') . '.pdf';
+        $fileName = 'Employee_Report_'.date('Y-m-d').'.pdf';
+
         return $pdf->download($fileName);
     }
 }

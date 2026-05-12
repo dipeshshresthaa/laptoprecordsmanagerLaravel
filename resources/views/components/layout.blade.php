@@ -36,6 +36,16 @@
             transform: scale(0.95);
             transition: all 0.4s ease-in-out;
         }
+
+        @keyframes shrink {
+            from {
+                width: 100%;
+            }
+
+            to {
+                width: 0%;
+            }
+        }
     </style>
 </head>
 
@@ -124,24 +134,26 @@
     </div>
 
     <div class="min-h-screen flex flex-col">
-        <nav class="bg-white border-b border-slate-200 sticky top-0 z-10">
+        <nav class="bg-white border-b border-slate-200 sticky top-0 z-10 shadow-sm">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-16">
-                    <div class="flex">
-                        <div class="flex items-center space-x-3 mr-8">
-                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
-                                </path>
-                            </svg>
-                            <span class="font-bold text-xl tracking-tight text-slate-800">Laptop Records Manager</span>
+                <div class="flex justify-between h-16 w-full">
+
+                    <div class="flex items-center">
+                        <div class="flex items-center space-x-3 mr-8 shrink-0">
+                            <a href="{{ route('dashboard') }}"
+                                class="flex items-center space-x-3 overflow-hidden focus:outline-none hover:opacity-80 transition-opacity cursor-pointer">
+                                <svg class="w-8 h-8 text-blue-500 shrink-0" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                                <span class="font-bold text-xl tracking-tight text-slate-900">Laptop Records
+                                    Manager</span>
+                            </a>
                         </div>
 
                         <div class="hidden sm:flex sm:space-x-8">
-                            <a href="{{ route('dashboard') }}"
-                                class="{{ request()->routeIs('dashboard') ? 'border-blue-500 text-slate-900' : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700' }} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">
-                                Dashboard
-                            </a>
                             <a href="{{ route('employees.index') }}"
                                 class="{{ request()->routeIs('employees.*') ? 'border-blue-500 text-slate-900' : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700' }} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">
                                 Employees
@@ -154,7 +166,12 @@
 
                             <a href="{{ route('lookups.index') }}"
                                 class="{{ request()->routeIs('lookups.*') ? 'border-blue-500 text-slate-900' : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700' }} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">
-                                Settings - Model, make etc.
+                                Settings
+                            </a>
+
+                            <a href="{{ route('reports.index') }}"
+                                class="{{ request()->routeIs('reports.*') ? 'border-blue-500 text-slate-900' : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700' }} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">
+                                Firm reports
                             </a>
 
                             @if (Auth::user()->is_admin)
@@ -163,25 +180,27 @@
                                     Users
                                 </a>
                             @endif
-
-                            <a href="{{ route('reports.index') }}"
-                                class="text-slate-600 hover:bg-slate-50 hover:text-slate-900 group flex items-center px-2 py-2 text-sm font-medium rounded-md">
-                                Firm reports
-                            </a>
                         </div>
                     </div>
 
-                    <div class="flex items-center space-x-4">
-                        <span class="text-sm font-medium text-slate-600 hidden sm:inline-block">
-                            Hello, {{ Auth::user()->employee->first_name ?? Auth::user()->username }}
-                        </span>
+                    <div class="flex items-center space-x-6">
+                        <div class="hidden sm:flex flex-col text-right">
+                            <span class="text-xs text-slate-500 uppercase font-semibold tracking-wider">Logged in
+                                as</span>
+                            <span class="text-sm font-bold text-slate-900">
+                                {{ Auth::user()->employee->first_name ?? Auth::user()->username }}
+                            </span>
+                        </div>
+
+                        <div class="h-8 w-px bg-slate-200 hidden sm:block"></div>
+
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
                             <button type="submit"
-                                class="text-sm font-medium text-slate-500 hover:text-rose-600 transition-colors flex items-center">
+                                class="inline-flex items-center justify-center px-4 py-2 border border-slate-300 shadow-sm text-sm font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 hover:text-rose-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 transition-colors group">
                                 Logout
-                                <svg class="w-4 h-4 ml-1.5" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 ml-2 text-slate-400 group-hover:text-rose-600 transition-colors"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
                                     </path>
@@ -189,6 +208,7 @@
                             </button>
                         </form>
                     </div>
+
                 </div>
             </div>
         </nav>
@@ -197,18 +217,6 @@
             {{ $slot }}
         </main>
     </div>
-
-    <style>
-        @keyframes shrink {
-            from {
-                width: 100%;
-            }
-
-            to {
-                width: 0%;
-            }
-        }
-    </style>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {

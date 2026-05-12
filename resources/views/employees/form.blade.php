@@ -90,7 +90,7 @@
                                 @foreach ($potentialPrincipals as $principal)
                                     <option value="{{ $principal->id }}"
                                         {{ old('principal_id', $employee->principal_id) == $principal->id ? 'selected' : '' }}>
-                                        {{ $principal->fullName }}
+                                        {{ $principal->fullName ?? $principal->first_name . ' ' . $principal->last_name }}
                                     </option>
                                 @endforeach
                             </select>
@@ -102,28 +102,31 @@
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Articleship deed (PDF)</label>
 
-                            @if (!empty($employee->articleship_deed_pdf))
-                                <div class="mb-3 flex items-center p-3 bg-green-50 rounded-lg border border-green-100">
-                                    <svg class="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
+                            @if ($employee->articleship_deed_path)
+                                <div
+                                    class="mb-3 flex items-center p-2.5 bg-emerald-50 rounded-lg border border-emerald-100">
+                                    <svg class="w-4 h-4 text-emerald-600 mr-2 shrink-0" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
-                                    <span class="text-sm text-green-800 font-medium mr-auto">Secure document stored in
-                                        database</span>
-
-                                    <a href="{{ route('employees.deed', $employee) }}" target="_blank"
-                                        class="text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors">
-                                        View PDF &rarr;
+                                    <span class="text-xs text-emerald-800 font-medium mr-auto">Current document
+                                        saved</span>
+                                    <a href="{{ Storage::url($employee->articleship_deed_path) }}" target="_blank"
+                                        class="text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors">
+                                        View &rarr;
                                     </a>
                                 </div>
                             @endif
 
-                            <input type="file" name="articleship_deed_pdf" accept=".pdf"
-                                class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 transition-colors">
-                            <span class="text-xs text-slate-500 mt-1 block">Upload a new file to
-                                {{ $employee->exists ? 'replace the existing one' : 'attach to this record' }}.</span>
-                            @error('articleship_deed_pdf')
+                            <input type="file" name="articleship_deed" accept=".pdf"
+                                class="block w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 transition-colors border border-slate-300 rounded-lg p-1">
+
+                            <p class="text-[10px] text-slate-500 mt-1">
+                                {{ $employee->exists ? 'Upload to replace existing deed (Max 10MB)' : 'Attach PDF deed (Optional, Max 10MB)' }}
+                            </p>
+
+                            @error('articleship_deed')
                                 <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
                             @enderror
                         </div>

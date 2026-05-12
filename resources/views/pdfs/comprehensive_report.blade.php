@@ -1,37 +1,94 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>Comprehensive Firm Report</title>
     <style>
-        @page { margin: 40px 40px; }
-        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 11px; color: #000; }
-        
-        .header-table { width: 100%; border-bottom: 2px solid #000; padding-bottom: 15px; margin-bottom: 20px; }
-        .company-name { font-size: 20px; font-weight: bold; text-transform: uppercase; margin: 0; }
-        .doc-title { font-size: 14px; margin: 5px 0 0 0; }
-        
-        .section-title { font-size: 16px; font-weight: bold; margin-bottom: 15px; text-transform: uppercase; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
-        .group-title { font-size: 13px; font-weight: bold; margin-top: 20px; margin-bottom: 5px; }
+        @page {
+            margin: 40px 40px;
+        }
 
-        .data-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
-        .data-table th { padding: 8px 10px; text-align: left; font-size: 10px; text-transform: uppercase; border-bottom: 2px solid #000; font-weight: bold; }
-        .data-table td { padding: 8px 10px; border-bottom: 1px dotted #ccc; }
-        
-        .page-break { page-break-before: always; }
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 11px;
+            color: #000;
+        }
+
+        .header-table {
+            width: 100%;
+            border-bottom: 2px solid #000;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .company-name {
+            font-size: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        .doc-title {
+            font-size: 14px;
+            margin: 5px 0 0 0;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+        }
+
+        .group-title {
+            font-size: 13px;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 5px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        .data-table th {
+            padding: 8px 10px;
+            text-align: left;
+            font-size: 10px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #000;
+            font-weight: bold;
+        }
+
+        .data-table td {
+            padding: 8px 10px;
+            border-bottom: 1px dotted #ccc;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
     </style>
 </head>
+
 <body>
 
     @php
-        $printHeader = function($subtitle) use ($search) {
-            $searchHtml = $search ? "<p style='margin: 5px 0 0 0; font-size: 10px;'>Filtered by Search: \"{$search}\"</p>" : "";
+        $printHeader = function ($subtitle) use ($search) {
+            $searchHtml = $search
+                ? "<p style='margin: 5px 0 0 0; font-size: 10px;'>Filtered by Search: \"{$search}\"</p>"
+                : '';
             $date = now()->format('M d, Y');
             return "
             <table class='header-table'>
                 <tr>
                     <td>
-                        <h1 class='company-name'>Firm employee report</h1>
+                        <h1 class='company-name'>Firm employees report</h1>
                         <h2 class='doc-title'>{$subtitle}</h2>
                         {$searchHtml}
                     </td>
@@ -55,7 +112,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($activeStaff as $staff)
+            @foreach ($activeStaff as $staff)
                 <tr>
                     <td><strong>{{ $staff->first_name }} {{ $staff->last_name }}</strong></td>
                     <td>{{ $staff->role }}</td>
@@ -79,7 +136,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($leftStaff as $staff)
+            @foreach ($leftStaff as $staff)
                 <tr>
                     <td><strong>{{ $staff->first_name }} {{ $staff->last_name }}</strong></td>
                     <td>{{ $staff->role }}</td>
@@ -93,11 +150,11 @@
     <div class="page-break"></div>
     {!! $printHeader('Part 3: Principal-wise trainee allocation') !!}
     <div class="section-title">Active trainees grouped by principal</div>
-    
+
     @forelse($principalGroups as $principalId => $trainees)
         @php $principal = $allPrincipals->get($principalId); @endphp
         <div class="group-title">
-            Principal: {{ $principal ? "{$principal->first_name} {$principal->last_name}" : 'Unassigned' }} 
+            Principal: {{ $principal ? "{$principal->first_name} {$principal->last_name}" : 'Unassigned' }}
             ({{ $trainees->count() }} trainees)
         </div>
         <table class="data-table">
@@ -109,7 +166,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($trainees as $trainee)
+                @foreach ($trainees as $trainee)
                     <tr>
                         <td>{{ $trainee->first_name }} {{ $trainee->last_name }}</td>
                         <td>{{ $trainee->department ?? '-' }}</td>
@@ -123,7 +180,7 @@
     @endforelse
 
     <div class="page-break"></div>
-    {!! $printHeader('Part 4: Master Roster (Overall Staff)') !!}
+    {!! $printHeader('Part 4: Master roster (Overall employees)') !!}
     <div class="section-title">Total workforce ({{ $totalStaff->count() }})</div>
     <table class="data-table">
         <thead>
@@ -136,7 +193,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($totalStaff as $staff)
+            @foreach ($totalStaff as $staff)
                 <tr>
                     <td><strong>{{ $staff->first_name }} {{ $staff->last_name }}</strong></td>
                     <td>{{ $staff->role }}</td>
@@ -149,4 +206,5 @@
     </table>
 
 </body>
+
 </html>

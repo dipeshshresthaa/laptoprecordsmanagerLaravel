@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\EmployeeImportController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
@@ -37,6 +38,15 @@ Route::middleware(['auth'])->group(function () {
     // Standard Routes (Protected by the force.password middleware)
     Route::middleware('force.password')->group(function () {
 
+        Route::middleware('admin')->group(function () {
+            Route::resource('users', UserController::class);
+            Route::get('employees/import', [EmployeeImportController::class, 'create'])->name('admin.employees.import');
+            Route::post('employees/import', [EmployeeImportController::class, 'store'])->name('admin.employees.import.store');
+            Route::get('employees/template', [EmployeeImportController::class, 'downloadTemplate'])->name('admin.employees.template');
+            Route::get('documents/upload', [EmployeeImportController::class, 'createDocumentUpload'])->name('admin.documents.upload');
+            Route::post('documents/upload', [EmployeeImportController::class, 'storeDocuments'])->name('admin.documents.upload.store');
+        });
+
         // Main Dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -48,6 +58,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('employees/{employee}/mark-left', [EmployeeController::class, 'showMarkLeftForm'])->name('employees.mark-left');
         Route::post('employees/{employee}/mark-left', [EmployeeController::class, 'processMarkLeft'])->name('employees.process-left');
+        Route::post('employees/{employee}/upgrade', [EmployeeController::class, 'upgradeTrainee'])->name('employees.upgrade');
         Route::get('/api/lookups/models/{brandId}', [LaptopController::class, 'getModelsByBrand']);
 
         // Laptop Lifecycle (Assignment & Return)
@@ -88,14 +99,14 @@ Route::middleware(['auth'])->group(function () {
 
         // Employees
         Route::get('employees/{employee}/deed', [EmployeeController::class, 'viewDeed'])->name('employees.deed');
+
+        // Route::post('employees/{employee}/documents', [EmployeeController::class, 'uploadDocuments'])->name('employees.documents.upload');
         Route::resource('employees', EmployeeController::class);
 
         // Laptop Routes
         Route::resource('laptops', LaptopController::class);
 
         // Users (Admin Only)
-        Route::middleware('admin')->group(function () {
-            Route::resource('users', UserController::class);
-        });
+
     });
 });

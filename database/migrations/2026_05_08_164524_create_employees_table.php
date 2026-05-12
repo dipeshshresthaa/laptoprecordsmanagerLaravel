@@ -17,22 +17,22 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('middle_name')->nullable();
             $table->string('last_name');
-            
+
             $table->string('phone_number')->nullable();
             $table->string('address_state')->nullable();
             $table->string('address_district')->nullable();
             $table->string('address_municipality')->nullable();
             $table->string('pan_number')->nullable();
-            
+
             // EmployeeRole Enum mapping (can be stored as string or tinyInteger)
-            $table->string('role')->default('Other'); 
+            $table->string('role')->default('Other');
             $table->string('designation')->nullable();
-            
+
             $table->date('joining_date')->nullable();
             $table->date('exit_date')->nullable();
             $table->string('exit_reason')->nullable();
             $table->date('articleship_completion_date')->nullable();
-            
+
             $table->string('bank_name')->nullable();
             $table->string('bank_branch')->nullable();
             $table->string('bank_account_number')->nullable();
@@ -41,8 +41,8 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
 
             // Replaced byte[] with string paths for file storage
-            $table->binary('articleship_deed_pdf')->nullable();
-            $table->binary('completion_certificate_pdf')->nullable();
+            $table->string('articleship_deed_path')->nullable();
+            $table->string('completion_certificate_path')->nullable();
 
             // Self-referencing foreign key for Principal
             $table->string('principal_id')->nullable();

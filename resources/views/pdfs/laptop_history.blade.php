@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Hardware Audit Report - {{ $laptop->serial_number }}</title>
+    <title>Hardware history - {{ $laptop->serial_number }}</title>
     <style>
         body {
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -47,7 +47,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 30px;
-            background-color: #f8fafc;
+            /* background-color: #f8fafc; */
         }
 
         .specs-table td {
@@ -78,7 +78,7 @@
         }
 
         .timeline-table th {
-            background-color: #f1f5f9;
+            /* background-color: #f1f5f9; */
             padding: 10px;
             text-align: left;
             font-size: 11px;
