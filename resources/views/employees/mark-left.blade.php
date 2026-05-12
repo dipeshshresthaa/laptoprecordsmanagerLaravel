@@ -25,30 +25,27 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="card">
             <form action="{{ route('employees.process-left', $employee) }}" method="POST" class="p-6 sm:p-8 space-y-6">
                 @csrf
                 
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Date of exit *</label>
-                    <input type="date" name="exit_date" value="{{ old('exit_date', now()->format('Y-m-d')) }}" required max="9999-12-31" 
-                           class="w-full rounded-lg border-slate-300 shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm text-slate-700">
-                    @error('exit_date') <span class="text-rose-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                    <label class="form-label">Date of exit *</label>
+                    <input type="date" name="exit_date" value="{{ old('exit_date', now()->format('Y-m-d')) }}" required max="9999-12-31" class="form-input text-slate-700">
+                    @error('exit_date') <span class="form-error">{{ $message }}</span> @enderror
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Reason for leaving *</label>
-                    <input type="text" name="reason" value="{{ old('reason') }}" required placeholder="e.g. Resigned, Terminated, Contract ended" 
-                           class="w-full rounded-lg border-slate-300 shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm">
-                    @error('reason') <span class="text-rose-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                    <label class="form-label">Reason for leaving *</label>
+                    <input type="text" name="reason" value="{{ old('reason') }}" required placeholder="e.g. Resigned, Terminated, Contract ended" class="form-input">
+                    @error('reason') <span class="form-error">{{ $message }}</span> @enderror
                 </div>
 
                 @if($employee->userAccount && $employee->userAccount->is_active)
                 <div class="p-4 bg-slate-50 rounded-lg border border-slate-200 mt-6">
                     <label class="flex items-start space-x-3 cursor-pointer group">
                         <div class="flex items-center h-5">
-                            <input type="checkbox" name="deactivate_user" value="1" checked 
-                                   class="w-4 h-4 text-rose-600 border-slate-300 rounded focus:ring-rose-500 transition-colors">
+                            <input type="checkbox" name="deactivate_user" value="1" checked class="w-4 h-4 text-rose-600 border-slate-300 rounded focus:ring-rose-500 transition-colors">
                         </div>
                         <div>
                             <span class="text-sm font-medium text-slate-900 block group-hover:text-rose-600 transition-colors">
@@ -63,10 +60,10 @@
                 @endif
 
                 <div class="pt-4 flex items-center justify-end space-x-4 border-t border-slate-100">
-                    <a href="{{ route('employees.index') }}" class="px-5 py-2.5 border border-slate-300 rounded-lg text-slate-700 bg-white hover:bg-slate-50 font-medium transition-colors text-sm">
+                    <a href="{{ route('employees.index') }}" class="btn btn-secondary px-5 py-2.5">
                         Cancel
                     </a>
-                    <button type="submit" class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg shadow-sm font-medium transition-all text-sm">
+                    <button type="submit" class="btn !bg-rose-600 hover:!bg-rose-700 !text-white px-5 py-2.5">
                         Confirm offboarding
                     </button>
                 </div>
