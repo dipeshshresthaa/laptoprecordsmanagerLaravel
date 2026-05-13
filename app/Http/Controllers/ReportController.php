@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Barryvdh\DomPDF\Facade\Pdf; // <--- Ensure DomPDF is imported!
+use Illuminate\Support\Facades\DB; // <--- Ensure DomPDF is imported!
 
 class ReportController extends Controller
 {
@@ -30,8 +30,12 @@ class ReportController extends Controller
         $employees = Employee::query()->where('emp_code', '!=', 'ADMIN001');
         $employeesWithPrincipals = $employees->with('principal');
 
-        $partners = $employees->where('role', 'Partner')->where($applyFilters)->orderBy('first_name', 'asc')->get();
-        $trainees = Employee::with('principal')->where('role', 'ArticleTrainee')->where($applyFilters)->orderBy('employment_date', 'asc')->orderBy('full_name', 'asc')->get();
+        $partners = $employees->where('role', 'Partner')->where($applyFilters)
+            ->orderBy('joining_date', 'asc')
+            ->orderBy('first_name', 'asc')
+            ->orderBy('middle_name', 'asc')
+            ->orderBy('last_name', 'asc')->get();
+        $trainees = Employee::with('principal')->where('role', 'ArticleTrainee')->where($applyFilters)->orderBy('joining_date', 'asc')->orderBy('full_name', 'asc')->get();
 
         $principalStats = Employee::query()
             ->whereNotNull('principal_id')
@@ -47,15 +51,13 @@ class ReportController extends Controller
             })
             ->values(); // Reset array keys
 
-
-
         // NEW: Total Staff List (Ignores active/left toggle, respects search)
         $totalStaffQuery = Employee::with('principal')->where('emp_code', '!=', 'ADMIN001')
             ->orderBy('is_active', 'desc')       // 1. Active staff (1) first, then Left staff (0)
             ->orderBy('role', 'desc')
             ->orderBy('employment_date', 'asc') // 2. Date of employment descending (Newest first)
             ->orderBy('first_name', 'asc')       // 3. First name ascending (A-Z)
-            ->orderBy('last_name', 'asc');;
+            ->orderBy('last_name', 'asc');
         if ($search) {
             $totalStaffQuery->where(function ($q) use ($search) {
                 $q->where('first_name', 'like', "%{$search}%")
@@ -77,9 +79,10 @@ class ReportController extends Controller
         $baseQuery = Employee::with('principal')->Where('emp_code', '!=', 'ADMIN001')
             ->orderBy('is_active', 'desc')       // 1. Active staff (1) first, then Left staff (0)
             ->orderBy('role', 'desc')
-            ->orderBy('employment_date', 'desc') // 2. Date of employment descending (Newest first)
-            ->orderBy('full_name', 'asc')       // 3. First name ascending (A-Z)
-        ;
+            ->orderBy('joining_date', 'asc') // 2. Date of employment descending (Newest first)
+            ->orderBy('first_name', 'asc')
+            ->orderBy('middle_name', 'asc')
+            ->orderBy('last_name', 'asc');       // 3. First name ascending (A-Z)
 
         if ($search) {
             $baseQuery->where(function ($q) use ($search) {
@@ -99,8 +102,6 @@ class ReportController extends Controller
         $activeTrainees = (clone $baseQuery)
             ->where('role', 'ArticleTrainee')
             ->where('is_active', true)
-            ->orderBy('joining_date', 'asc')
-            ->orderBy('first_name', 'asc') // Sort trainees within the group
             ->get();
 
         // 2. Group them by Principal
@@ -113,7 +114,8 @@ class ReportController extends Controller
         // 4. (Optional) Re-sort the groups to match the alphabetical Principal order
         $principalGroups = $principalGroups->sortBy(function ($trainees, $principalId) use ($allPrincipals) {
             $principal = $allPrincipals->get($principalId);
-            return $principal ? $principal->first_name : 'ZZZ';
+
+            return $principal ? $principal->joining_date : 'ZZZ';
         });
 
         // 4. Overall Staff (Master Roster)
@@ -128,7 +130,7 @@ class ReportController extends Controller
             'search'
         ), [], 'UTF-8');
 
-        return $pdf->stream('Comprehensive_Firm_Report_' . now()->format('Ymd') . '.pdf');
+        return $pdf->stream('Comprehensive_Firm_Report_'.now()->format('Ymd').'.pdf');
     }
 
     public function getTraineesByPrincipal(Request $request, $principalId)

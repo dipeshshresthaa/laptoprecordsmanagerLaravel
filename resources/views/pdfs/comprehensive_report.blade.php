@@ -107,7 +107,7 @@
             <tr>
                 <th width="30%">Employee name</th>
                 <th width="20%">Role</th>
-                <th width="25%">Department</th>
+                <th width="25%">Joining date</th>
                 <th width="25%">Assigned principal</th>
             </tr>
         </thead>
@@ -116,7 +116,7 @@
                 <tr>
                     <td><strong>{{ $staff->full_name }}</strong></td>
                     <td>{{ $staff->role_display }}</td>
-                    <td>{{ $staff->department ?? '-' }}</td>
+                    <td class="text-center">{{ $staff->joining_date?->format('d-M-Y') ?? '-' }}</td>
                     <td>{{ $staff->principal->full_name ?? '-' }}</td>
                 </tr>
             @endforeach
@@ -131,7 +131,7 @@
             <tr>
                 <th width="30%">Employee name</th>
                 <th width="20%">Role</th>
-                <th width="25%">Department</th>
+                <th width="25%">Joining date</th>
                 <th width="25%">Former principal</th>
             </tr>
         </thead>
@@ -140,7 +140,7 @@
                 <tr>
                     <td><strong>{{ $staff->full_name }}</strong></td>
                     <td>{{ $staff->role_display }}</td>
-                    <td>{{ $staff->department ?? '-' }}</td>
+                    <td>{{ $staff->joining_date?->format('d-M-Y') }}</td>
                     <td>{{ $staff->principal->full_name ?? '-' }}</td>
                 </tr>
             @endforeach
@@ -189,9 +189,9 @@
             <tr>
                 <th width="25%">Employee name</th>
                 <th width="15%">Role</th>
-                <th width="20%">Department</th>
+                <th width="25%">Joining date</th>
                 <th width="25%">Principal</th>
-                <th width="15%">Status</th>
+                <th width="10%">Status</th>
             </tr>
         </thead>
         <tbody>
@@ -199,7 +199,7 @@
                 <tr>
                     <td><strong>{{ $staff->full_name }}</strong></td>
                     <td>{{ $staff->role_display }}</td>
-                    <td>{{ $staff->department ?? '-' }}</td>
+                    <td>{{ $staff->joining_date?->format('d-M-Y') }}</td>
                     <td>{{ $staff->principal->full_name ?? 'NA' }}</td>
                     <td>{{ $staff->is_active ? 'Active' : 'Left' }}</td>
                 </tr>
