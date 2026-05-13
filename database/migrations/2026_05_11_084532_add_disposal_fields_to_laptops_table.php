@@ -15,7 +15,7 @@ return new class extends Migration
             }
             $table->string('disposal_method')->nullable(); // e.g., Scrapped, Sold, Lost
             $table->text('disposal_reason')->nullable();
-            $table->foreignId('disposed_by_id')->nullable()->constrained('users');
+            $table->foreignUuid('disposed_by_id')->nullable()->constrained('users');
         });
     }
 

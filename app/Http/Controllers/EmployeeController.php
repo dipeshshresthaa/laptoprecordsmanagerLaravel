@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SaveEmployeeRequest;
 use App\Models\Employee;
 use App\Models\LaptopAssignment;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -67,7 +68,7 @@ class EmployeeController extends Controller
             if ($employee->articleship_deed_path) {
                 Storage::disk('public')->delete($employee->articleship_deed_path);
             }
-            $fileName = $employee->emp_code . '_Deed_' . time() . '.pdf';
+            $fileName = $employee->emp_code.'_Deed_'.time().'.pdf';
             $employee->articleship_deed_path = $request->file('articleship_deed')->storeAs($docsDir, $fileName, 'public');
             $uploadedCount++;
         }
@@ -76,7 +77,7 @@ class EmployeeController extends Controller
             if ($employee->articleship_completion_path) {
                 Storage::disk('public')->delete($employee->articleship_completion_path);
             }
-            $fileName = $employee->emp_code . '_Completion_' . time() . '.pdf';
+            $fileName = $employee->emp_code.'_Completion_'.time().'.pdf';
             $employee->articleship_completion_path = $request->file('articleship_completion')->storeAs($docsDir, $fileName, 'public');
             $uploadedCount++;
         }
@@ -113,13 +114,9 @@ class EmployeeController extends Controller
         return view('employees.form', compact('potentialPrincipals', 'bankNames', 'bankBranches', 'employee'));
     }
 
-    public function store(Request $request)
+    public function store(SaveEmployeeRequest $request)
     {
-        $validated = $this->validateEmployee($request);
-
-        if (Employee::query()->where('emp_code', $validated['emp_code'])->exists()) {
-            return back()->withInput()->withErrors(['emp_code' => 'Employee code already exists.']);
-        }
+        $validated = $request->validated();
 
         $employee = new Employee($validated);
         $employee->created_by_id = Auth::id();
@@ -156,9 +153,9 @@ class EmployeeController extends Controller
         return view('employees.form', compact('employee', 'potentialPrincipals', 'bankNames', 'bankBranches'));
     }
 
-    public function update(Request $request, Employee $employee)
+    public function update(SaveEmployeeRequest $request, Employee $employee)
     {
-        $validated = $this->validateEmployee($request, $employee->id);
+        $validated = $request->validated();
 
         $employee->fill($validated);
         $employee->modified_by_id = Auth::id();
@@ -186,37 +183,6 @@ class EmployeeController extends Controller
     }
 
     // --- Helper Methods ---
-
-    private function validateEmployee(Request $request, $ignoreId = null)
-    {
-        $uniqueEmpRule = $ignoreId ? "unique:employees,emp_code,{$ignoreId},id" : '';
-        $uniqueAccountRule = $ignoreId ? "unique:employees,bank_account_number,{$ignoreId},id" : 'unique:employees,bank_account_number';
-
-        return $request->validate([
-            'emp_code' => ['required', 'string', $uniqueEmpRule],
-            'first_name' => 'required|string',
-            'middle_name' => 'nullable|string',
-            'last_name' => 'required|string',
-            'phone_number' => 'nullable|numeric',
-            'address_state' => 'nullable|string',
-            'address_district' => 'nullable|string',
-            'address_municipality' => 'nullable|string',
-            'pan_number' => 'nullable|digits:9',
-            'designation' => 'nullable|string',
-            'joining_date' => 'nullable|date|before_or_equal:9999-12-31',
-            'bank_name' => 'nullable|string',
-            'bank_branch' => 'nullable|string',
-            'bank_account_number' => ['nullable', 'string', $uniqueAccountRule],
-            'cit_number' => 'nullable|string',
-            'role' => 'required|string',
-            'principal_id' => 'required_if:role,ArticleTrainee',
-            // 'articleship_deed' => 'nullable|file|mimes:pdf|max:10240', // Unified name to match path logic
-        ], [
-            'principal_id.required_if' => 'An article trainee must have a principal assigned.',
-            'bank_account_number.unique' => 'The bank account number is already in use by some employee. Confirm the bank account number again.',
-        ]);
-    }
-
     private function handleTraineeData(Request $request, Employee $employee)
     {
         if ($employee->role === 'ArticleTrainee') {
@@ -230,7 +196,7 @@ class EmployeeController extends Controller
                 }
 
                 // 2. Generate clean filename: EMP-001_Deed_1715525413.pdf
-                $fileName = $employee->emp_code . '_Deed_' . time() . '.pdf';
+                $fileName = $employee->emp_code.'_Deed_'.time().'.pdf';
 
                 // 3. Store in storage/app/public/employee_documents
                 $path = $request->file('articleship_deed')->storeAs('employee_documents', $fileName, 'public');
@@ -290,7 +256,7 @@ class EmployeeController extends Controller
                 Storage::disk('public')->delete($employee->completion_certificate_path);
             }
 
-            $fileName = $employee->emp_code . '_Completion_' . time() . '.pdf';
+            $fileName = $employee->emp_code.'_Completion_'.time().'.pdf';
             $employee->completion_certificate_path = $request->file('certificate')->storeAs('employee_documents', $fileName, 'public');
         }
 
@@ -340,7 +306,7 @@ class EmployeeController extends Controller
 
         $pdf = Pdf::loadView('employees.pdf', compact('employees', 'showLeftEmployees'));
 
-        $fileName = 'Employee_Report_' . date('Y-m-d') . '.pdf';
+        $fileName = 'Employee_Report_'.date('Y-m-d').'.pdf';
 
         return $pdf->download($fileName);
     }

@@ -2,22 +2,31 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class Employee extends Model
 {
-    // Configure the custom string primary key
     protected $keyType = 'string';
+
     public $incrementing = false;
 
-    // Allow mass assignment for these fields
-    protected $guarded = [];
+    // REMOVED: protected $guarded = [];
 
-    // Cast database dates to Carbon instances and boolean states
+    // ADDED: Strict mass assignment protection
+    protected $fillable = [
+        'emp_code', 'first_name', 'middle_name', 'last_name',
+        'phone_number', 'address_state', 'address_district', 'address_municipality',
+        'pan_number', 'role', 'designation', 'joining_date',
+        'exit_date', 'exit_reason', 'articleship_completion_date',
+        'bank_name', 'bank_branch', 'bank_account_number', 'cit_number',
+        'is_active', 'principal_id', 'created_by_id', 'modified_by_id',
+        'articleship_deed_path', 'completion_certificate_path',
+    ];
+
     protected $casts = [
         'joining_date' => 'date',
         'exit_date' => 'date',
@@ -25,7 +34,6 @@ class Employee extends Model
         'is_active' => 'boolean',
     ];
 
-    // Auto-generate the 8-char uppercase string ID when creating a new record
     protected static function boot()
     {
         parent::boot();
@@ -36,26 +44,25 @@ class Employee extends Model
         });
     }
 
-    // Computed Property: FullName (Equivelant to [NotMapped] in C#)
     protected function fullName(): Attribute
     {
         return Attribute::make(
-            get: fn() => implode(' ', array_filter([
+            get: fn () => implode(' ', array_filter([
                 $this->first_name,
                 $this->middle_name,
-                $this->last_name
-            ], fn($value) => !empty(trim($value ?? ''))))
+                $this->last_name,
+            ], fn ($value) => ! empty(trim($value ?? ''))))
         );
     }
 
     protected function roleDisplay(): Attribute
     {
         return Attribute::make(
-            get: fn() => match ($this->role) {
+            get: fn () => match ($this->role) {
                 'ArticleTrainee' => 'Article trainee',
-                'Partner'        => 'Partner',
-                'Other'          => 'Other',
-                default          => $this->role,
+                'Partner' => 'Partner',
+                'Other' => 'Other',
+                default => $this->role,
             }
         );
     }
@@ -63,21 +70,19 @@ class Employee extends Model
     protected function roleBadgeClasses(): Attribute
     {
         return Attribute::make(
-            get: fn() => match ($this->role) {
+            get: fn () => match ($this->role) {
                 'ArticleTrainee' => 'bg-blue-100 text-blue-800 border-blue-200',
-                'Partner'        => 'bg-purple-100 text-purple-800 border-purple-200',
-                default          => 'bg-slate-100 text-slate-800 border-slate-200',
+                'Partner' => 'bg-purple-100 text-purple-800 border-purple-200',
+                default => 'bg-slate-100 text-slate-800 border-slate-200',
             }
         );
     }
 
-    // Relationship: Principal (Self-referencing BelongsTo)
     public function principal(): BelongsTo
     {
         return $this->belongsTo(Employee::class, 'principal_id');
     }
 
-    // Relationship: Trainees (Self-referencing HasMany)
     public function trainees(): HasMany
     {
         return $this->hasMany(Employee::class, 'principal_id');
@@ -93,17 +98,8 @@ class Employee extends Model
         return $this->belongsTo(User::class, 'created_by_id');
     }
 
-    // The Audit Trail: Who last updated this employee record?
     public function modifier()
     {
         return $this->belongsTo(User::class, 'modified_by_id');
     }
-
-
-
-    // Example Relationship placeholder for LaptopAssignments
-    // public function laptopAssignments(): HasMany
-    // {
-    //     return $this->hasMany(LaptopAssignment::class);
-    // }
 }

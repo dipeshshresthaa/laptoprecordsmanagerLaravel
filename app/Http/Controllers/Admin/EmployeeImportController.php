@@ -6,11 +6,8 @@ use App\Exports\EmployeeTemplateExport;
 use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
-use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class EmployeeImportController extends Controller
 {
@@ -93,82 +90,34 @@ class EmployeeImportController extends Controller
 
     public function store(Request $request)
     {
-        // Notice we changed this to 'excel_file' and added xlsx support
         $request->validate([
             'excel_file' => 'required|mimes:xlsx,xls,csv|max:5120',
         ]);
 
-        $file = $request->file('excel_file');
-
-        // Use Maatwebsite Excel to read the file directly into an array.
-        // [0] targets the very first sheet ("Data Entry") ignoring the Instructions sheet
-        $sheets = Excel::toArray(new \stdClass, $file);
-        $rows = $sheets[0];
-
-        $header = true;
-        $count = 0;
-
-        DB::beginTransaction();
         try {
-            foreach ($rows as $index => $row) {
-                if ($header) {
-                    $header = false;
+            // This single line triggers the chunks, mapping, validation, and database batch inserts!
+            Excel::import(new EmployeeImport, $request->file('excel_file'));
 
-                    continue; // Skip the header row
-                }
+            return redirect()->route('admin.employees.import')
+                ->with('success', 'Successfully imported employees from the spreadsheet.');
 
-                // Stop processing if the row is entirely empty (common at the bottom of Excel files)
-                if (empty(array_filter($row))) {
-                    continue;
-                }
+        } catch (ValidationException $e) {
+            // Bulletproof error handling: If validation fails in the Import class,
+            // tell the user EXACTLY which row and column failed.
+            $failures = $e->failures();
+            $errorMessages = [];
 
-                // Helper to safely parse Excel dates (Excel stores dates as numbers behind the scenes)
-                $parseDate = function ($value) {
-                    if (empty($value)) {
-                        return null;
-                    }
-                    if (is_numeric($value)) {
-                        return Date::excelToDateTimeObject($value)->format('Y-m-d');
-                    }
-
-                    return date('Y-m-d', strtotime($value));
-                };
-
-                // Map all 21 columns exactly as they appear in the template
-                Employee::create([
-                    'emp_code' => trim($row[0] ?? ''),
-                    'first_name' => trim($row[1] ?? ''),
-                    'middle_name' => trim($row[2] ?? ''),
-                    'last_name' => trim($row[3] ?? ''),
-                    'phone_number' => trim($row[4] ?? ''),
-                    'address_state' => trim($row[5] ?? ''),
-                    'address_district' => trim($row[6] ?? ''),
-                    'address_municipality' => trim($row[7] ?? ''),
-                    'pan_number' => trim($row[8] ?? ''),
-                    'role' => trim($row[9] ?? 'Other'),
-                    'designation' => trim($row[10] ?? ''),
-                    'joining_date' => $parseDate($row[11] ?? null),
-                    'exit_date' => $parseDate($row[12] ?? null),
-                    'exit_reason' => trim($row[13] ?? ''),
-                    'articleship_completion_date' => $parseDate($row[14] ?? null),
-                    'bank_name' => trim($row[15] ?? ''),
-                    'bank_branch' => trim($row[16] ?? ''),
-                    'bank_account_number' => trim($row[17] ?? ''),
-                    'cit_number' => trim($row[18] ?? ''),
-                    'is_active' => (bool) trim($row[19] ?? 1),
-                    'principal_id' => ! empty(trim($row[20] ?? '')) ? trim($row[20]) : null,
-                    'created_by_id' => Auth::user()->id,
-                ]);
-                $count++;
+            foreach ($failures as $failure) {
+                // $failure->row() gives the exact row number in Excel
+                // $failure->errors() gives the validation message
+                $errorMessages[] = "Row {$failure->row()}: ".implode(', ', $failure->errors());
             }
-            DB::commit();
+
+            return back()->with('error', 'Validation failed in the Excel file:<br>'.implode('<br>', $errorMessages));
+
         } catch (\Exception $e) {
-            DB::rollBack();
-
-            // This is amazing for debugging. If they upload a bad file, it tells them EXACTLY which row failed!
-            return back()->with('error', 'Error processing row '.($index + 1).': '.$e->getMessage());
+            // Catch any other general system errors
+            return back()->with('error', 'A system error occurred during import: '.$e->getMessage());
         }
-
-        return redirect()->route('admin.employees.import')->with('success', "Successfully imported {$count} employees.");
     }
 }

@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('employees', function (Blueprint $table) {
+            // Use string(8) as primary key to match your C# requirements
             $table->string('id', 8)->primary();
             $table->string('emp_code')->unique();
             $table->string('first_name');
@@ -24,15 +25,17 @@ return new class extends Migration
             $table->string('address_municipality')->nullable();
             $table->string('pan_number')->nullable();
 
-            // EmployeeRole Enum mapping (can be stored as string or tinyInteger)
+            // Role and Designation
             $table->string('role')->default('Other');
             $table->string('designation')->nullable();
 
+            // Dates
             $table->date('joining_date')->nullable();
             $table->date('exit_date')->nullable();
             $table->string('exit_reason')->nullable();
             $table->date('articleship_completion_date')->nullable();
 
+            // Financial Info
             $table->string('bank_name')->nullable();
             $table->string('bank_branch')->nullable();
             $table->string('bank_account_number')->nullable();
@@ -40,21 +43,29 @@ return new class extends Migration
 
             $table->boolean('is_active')->default(true);
 
-            // Replaced byte[] with string paths for file storage
+            // Document Paths
             $table->string('articleship_deed_path')->nullable();
             $table->string('completion_certificate_path')->nullable();
 
-            // Self-referencing foreign key for Principal
-            $table->string('principal_id')->nullable();
-            $table->foreign('principal_id')->references('id')->on('employees')->nullOnDelete();
+            // Define the column first.
+            // IMPORTANT: Length must match the primary key (8)
+            $table->string('principal_id', 8)->nullable();
 
-            // Foreign key for User Account
-            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
+            // Foreign key for User Account (Standard BigInt)
+            $table->foreignUuid('user_id')->nullable()->constrained('users')->nullOnDelete();
 
-            // AuditableEntity properties mapping
-            $table->string('created_by_id')->nullable();
-            $table->string('modified_by_id')->nullable();
+            // Audit Properties
+            $table->uuid('created_by_id')->nullable();
+            $table->uuid('modified_by_id')->nullable();
             $table->timestamps();
+        });
+
+        // Add self-referencing foreign key in a separate block for PostgreSQL compatibility
+        Schema::table('employees', function (Blueprint $table) {
+            $table->foreign('principal_id')
+                ->references('id')
+                ->on('employees')
+                ->nullOnDelete();
         });
     }
 

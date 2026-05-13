@@ -21,7 +21,7 @@ return new class extends Migration
             $table->boolean('requires_password_change')->default(true); // <-- ADD THIS LINE
 
             // Storing the Employee ID
-            // Note: We don't use strict foreign key constraints here to avoid a circular 
+            // Note: We don't use strict foreign key constraints here to avoid a circular
             // dependency crash during the initial migration (since the employees table is created after this one).
             $table->string('employee_id')->nullable();
 
@@ -34,7 +34,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // The default migration file also creates standard Laravel cache/job tables. 
+        // The default migration file also creates standard Laravel cache/job tables.
         // We leave these intact.
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
@@ -44,7 +44,7 @@ return new class extends Migration
 
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
-            $table->foreignId('user_id')->nullable()->index();
+            $table->foreignUuid('user_id')->nullable()->index();
             $table->string('ip_address', 45)->nullable();
             $table->text('user_agent')->nullable();
             $table->longText('payload');
