@@ -18,7 +18,7 @@ class Employee extends Model
 
     // ADDED: Strict mass assignment protection
     protected $fillable = [
-        'emp_code', 'first_name', 'middle_name', 'last_name',
+        'id', 'emp_code', 'first_name', 'middle_name', 'last_name',
         'phone_number', 'address_state', 'address_district', 'address_municipality',
         'pan_number', 'role', 'designation', 'joining_date',
         'exit_date', 'exit_reason', 'articleship_completion_date',

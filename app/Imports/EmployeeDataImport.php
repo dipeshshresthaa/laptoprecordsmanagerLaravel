@@ -4,6 +4,7 @@ namespace App\Imports;
 
 use App\Models\Employee;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
@@ -24,7 +25,14 @@ class EmployeeDataImport implements ToModel, WithBatchInserts, WithChunkReading,
             return null;
         }
 
+        // Determine the ID: Use provided one or generate a new 8-char uppercase string
+        $manualId = isset($row['id']) ? trim($row['id']) : null;
+        $finalId = ! empty($manualId)
+            ? $manualId
+            : strtoupper(substr(Str::uuid()->toString(), 0, 8));
+
         return new Employee([
+            'id' => $finalId,
             'emp_code' => trim($row['emp_code']),
             'first_name' => trim($row['first_name'] ?? ''),
             'middle_name' => trim($row['middle_name'] ?? ''),

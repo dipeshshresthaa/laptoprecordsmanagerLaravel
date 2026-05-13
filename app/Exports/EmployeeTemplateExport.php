@@ -25,7 +25,7 @@ class EmployeeDataSheet implements FromArray, WithHeadings, WithStyles, WithTitl
     public function headings(): array
     {
         return [
-            'emp_code', 'first_name', 'middle_name', 'last_name', 'phone_number',
+            'id', 'emp_code', 'first_name', 'middle_name', 'last_name', 'phone_number',
             'address_state', 'address_district', 'address_municipality', 'pan_number',
             'role', 'designation', 'joining_date', 'exit_date', 'exit_reason',
             'articleship_completion_date', 'bank_name', 'bank_branch',
@@ -38,6 +38,7 @@ class EmployeeDataSheet implements FromArray, WithHeadings, WithStyles, WithTitl
         // Provide one sample row to guide the user
         return [
             [
+                '', // Leave ID blank for auto-generation
                 'EMP-001', 'Ram', 'Bahadur', 'Thapa', '9841000000',
                 'Bagmati', 'Kathmandu', 'KMC-10', '123456789',
                 'ArticleTrainee', 'Audit Assistant', '2024-01-15', '', '',
@@ -70,6 +71,7 @@ class EmployeeInstructionsSheet implements FromArray, WithHeadings, WithStyles, 
     public function array(): array
     {
         return [
+            ['id', 'No', 'Leave BLANK to auto-generate, or provide an 8-char unique string.'],
             ['emp_code', 'Yes', 'Must be unique (e.g., EMP-001).'],
             ['first_name', 'Yes', 'Text.'],
             ['middle_name', 'No', 'Text.'],

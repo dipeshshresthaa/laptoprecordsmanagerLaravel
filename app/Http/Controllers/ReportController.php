@@ -35,7 +35,7 @@ class ReportController extends Controller
             ->orderBy('first_name', 'asc')
             ->orderBy('middle_name', 'asc')
             ->orderBy('last_name', 'asc')->get();
-        $trainees = Employee::with('principal')->where('role', 'ArticleTrainee')->where($applyFilters)->orderBy('joining_date', 'asc')->orderBy('full_name', 'asc')->get();
+        $trainees = Employee::with('principal')->where('role', 'ArticleTrainee')->where($applyFilters)->orderBy('joining_date', 'asc')->orderBy('first_name', 'asc')->orderBy('middle_name', 'asc')->orderBy('last_name', 'asc')->get();
 
         $principalStats = Employee::query()
             ->whereNotNull('principal_id')
@@ -55,7 +55,7 @@ class ReportController extends Controller
         $totalStaffQuery = Employee::with('principal')->where('emp_code', '!=', 'ADMIN001')
             ->orderBy('is_active', 'desc')       // 1. Active staff (1) first, then Left staff (0)
             ->orderBy('role', 'desc')
-            ->orderBy('employment_date', 'asc') // 2. Date of employment descending (Newest first)
+            ->orderBy('joining_date', 'asc') // 2. Date of employment descending (Newest first)
             ->orderBy('first_name', 'asc')       // 3. First name ascending (A-Z)
             ->orderBy('last_name', 'asc');
         if ($search) {

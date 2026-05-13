@@ -34,7 +34,7 @@ class EmployeeController extends Controller
         }
 
         // Sort alphabetically by first name
-        $employees = $query->where('emp_code', '!=', 'ADMIN001')->orderBy('is_active', 'desc')->orderBy('role', 'desc')->orderBy('full_name', 'asc')->get();
+        $employees = $query->where('emp_code', '!=', 'ADMIN001')->orderBy('is_active', 'desc')->orderBy('role', 'desc')->orderBy('first_name', 'asc')->orderBy('middle_name', 'asc')->orderBy('last_name', 'asc')->get();
 
         return view('employees.index', compact('employees', 'showLeftEmployees'));
     }
@@ -302,7 +302,7 @@ class EmployeeController extends Controller
             $query->where('is_active', true);
         }
 
-        $employees = $query->where('emp_code', '!=', 'ADMIN001')->orderBy('is_active', 'desc')->orderBy('role', 'desc')->orderBy('full_name', 'asc')->get();
+        $employees = $query->where('emp_code', '!=', 'ADMIN001')->orderBy('is_active', 'desc')->orderBy('role', 'desc')->orderBy('first_name', 'asc')->orderBy('middle_name', 'asc')->orderBy('last_name', 'asc')->get();
 
         $pdf = Pdf::loadView('employees.pdf', compact('employees', 'showLeftEmployees'));
 
