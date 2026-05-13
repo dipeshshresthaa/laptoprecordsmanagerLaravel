@@ -8,10 +8,9 @@
             </div>
 
             <div class="mt-4 sm:mt-0 flex items-center space-x-3">
-
                 @if (session('receipt_url'))
                     <a href="{{ session('receipt_url') }}" target="_blank"
-                        class="inline-flex items-center justify-center px-4 py-2 border border-emerald-200 text-sm font-bold rounded-lg shadow-sm text-emerald-800 bg-emerald-50 hover:bg-emerald-100 focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all">
+                        class="btn bg-emerald-50 border border-emerald-200 text-emerald-800 hover:bg-emerald-100 transition-all font-bold">
                         <svg class="mr-2 -ml-1 w-5 h-5 text-emerald-600" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -22,8 +21,7 @@
                     </a>
                 @endif
 
-                <a href="{{ route('laptops.create') }}"
-                    class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all">
+                <a href="{{ route('laptops.create') }}" class="btn btn-primary">
                     <svg class="mr-2 -ml-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
@@ -33,11 +31,9 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-visible">
-
+        <div class="card !overflow-visible">
             <form action="{{ route('laptops.index') }}" method="GET"
                 class="p-4 border-b border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-t-xl">
-
                 <div class="relative flex-1 max-w-md">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -46,8 +42,7 @@
                         </svg>
                     </div>
                     <input type="text" name="search" value="{{ request('search') }}"
-                        placeholder="Search by Serial Number or FA Code..."
-                        class="block w-full pl-10 pr-3 py-2.5 border border-slate-300 rounded-lg leading-5 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors shadow-sm">
+                        placeholder="Search by Serial Number or FA Code..." class="form-input pl-10 py-2.5">
                 </div>
 
                 <div
@@ -67,46 +62,36 @@
             </form>
 
             <div class="overflow-x-auto min-h-[300px]">
-                <table class="min-w-full divide-y divide-slate-200">
-                    <thead class="bg-white">
+                <table class="table-base">
+                    <thead class="table-head">
                         <tr>
-                            <th
-                                class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                Hardware ID</th>
-                            <th
-                                class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                Make & Model</th>
-                            <th
-                                class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                Purchase Date</th>
-                            <th
-                                class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                Status</th>
-                            <th
-                                class="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                Actions</th>
+                            <th class="table-th">Hardware ID</th>
+                            <th class="table-th">Make & Model</th>
+                            <th class="table-th">Purchase Date</th>
+                            <th class="table-th">Status</th>
+                            <th class="table-th !text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 bg-white">
                         @forelse ($laptops as $laptop)
                             <tr
-                                class="hover:bg-slate-50/80 transition-colors {{ $laptop->is_disposed ? 'bg-slate-50/50 opacity-60 grayscale-[50%]' : '' }}">
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                class="table-row {{ $laptop->is_disposed ? 'bg-slate-50/50 opacity-60 grayscale-[50%]' : '' }}">
+                                <td class="table-td">
                                     <div class="text-sm font-bold text-slate-900 font-mono">{{ $laptop->serial_number }}
                                     </div>
                                     <div class="text-xs text-slate-500 mt-0.5">
                                         {{ $laptop->laptop_fa_code ?? 'No FA Code' }}</div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="table-td">
                                     <div class="text-sm font-medium text-slate-900">
                                         {{ $laptop->brand->value ?? 'Unknown' }}</div>
                                     <div class="text-xs text-slate-500 mt-0.5">{{ $laptop->model->value ?? 'Unknown' }}
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                                <td class="table-td text-sm text-slate-600">
                                     {{ $laptop->purchase_date->format('M d, Y') }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="table-td">
                                     @if ($laptop->status === 'Available')
                                         <span
                                             class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
@@ -130,11 +115,10 @@
                                         </span>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-
+                                <td class="table-td text-right text-sm font-medium">
                                     <div class="relative inline-block text-left">
                                         <button type="button" data-target="dropdown-{{ $laptop->id }}"
-                                            class="dropdown-trigger inline-flex items-center justify-center px-3 py-1.5 border border-slate-200 shadow-sm text-sm font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all">
+                                            class="dropdown-trigger btn btn-secondary !px-3 !py-1.5">
                                             Manage
                                             <svg class="ml-1.5 -mr-1 w-4 h-4 text-slate-400" fill="none"
                                                 stroke="currentColor" viewBox="0 0 24 24">
@@ -156,7 +140,6 @@
                                                         <span class="mr-2">👨‍💻</span> Assign to employee
                                                     </a>
                                                 @endif
-
                                                 @if ($laptop->status === 'Assigned')
                                                     <a href="{{ route('laptops.return', $laptop) }}"
                                                         class="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-amber-50 hover:text-amber-700 font-medium">
@@ -185,8 +168,6 @@
                                                     <div class="border-t border-slate-100 my-1.5"></div>
                                                 @endif
 
-
-
                                                 <a href="{{ route('laptops.edit', $laptop) }}"
                                                     class="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                                                     <span class="mr-2">✏️</span> Edit base details
@@ -201,7 +182,6 @@
                                             </div>
                                         </div>
                                     </div>
-
                                 </td>
                             </tr>
                         @empty
@@ -217,10 +197,8 @@
                                     <p class="mt-1 text-sm text-slate-500">Get started by adding hardware to your
                                         inventory.</p>
                                     <div class="mt-6">
-                                        <a href="{{ route('laptops.create') }}"
-                                            class="inline-flex items-center px-4 py-2 border border-slate-300 shadow-sm text-sm font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 transition-colors">
-                                            Add new laptop
-                                        </a>
+                                        <a href="{{ route('laptops.create') }}" class="btn btn-secondary">Add new
+                                            laptop</a>
                                     </div>
                                 </td>
                             </tr>
@@ -234,25 +212,13 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             let activeDropdown = null;
+            document.querySelectorAll('.dropdown-menu').forEach(menu => document.body.appendChild(menu));
 
-            // 1. ESCAPE THE CSS TRAP: Move all menus to the root <body> tag
-            document.querySelectorAll('.dropdown-menu').forEach(menu => {
-                document.body.appendChild(menu);
-            });
-
-            // 2. Toggle dropdowns on click
             document.querySelectorAll('.dropdown-trigger').forEach(button => {
                 button.addEventListener('click', function(e) {
                     e.stopPropagation();
-
-                    // Find the specific menu we linked via the ID
-                    const targetId = this.getAttribute('data-target');
-                    const menu = document.getElementById(targetId);
-
-                    if (activeDropdown && activeDropdown !== menu) {
-                        closeMenu(activeDropdown);
-                    }
-
+                    const menu = document.getElementById(this.getAttribute('data-target'));
+                    if (activeDropdown && activeDropdown !== menu) closeMenu(activeDropdown);
                     if (menu.classList.contains('hidden')) {
                         openMenu(menu, this);
                         activeDropdown = menu;
@@ -263,16 +229,13 @@
                 });
             });
 
-            // Close when clicking anywhere else on the page
-            document.addEventListener('click', function() {
+            document.addEventListener('click', () => {
                 if (activeDropdown) {
                     closeMenu(activeDropdown);
                     activeDropdown = null;
                 }
             });
-
-            // Close if user scrolls the page to prevent floating orphans
-            window.addEventListener('scroll', function() {
+            window.addEventListener('scroll', () => {
                 if (activeDropdown) {
                     closeMenu(activeDropdown);
                     activeDropdown = null;
@@ -281,16 +244,10 @@
 
             function openMenu(menu, button) {
                 menu.classList.remove('hidden');
-
-                // Calculate exact coordinates based on the button
                 const rect = button.getBoundingClientRect();
                 const menuHeight = menu.offsetHeight || 230;
                 const menuWidth = 192;
-
-                // Anchor to the right edge of the button
                 menu.style.left = (rect.right - menuWidth) + 'px';
-
-                // Smart placement: Open upward if bottom of screen is too close
                 if (rect.bottom + menuHeight > window.innerHeight) {
                     menu.style.top = (rect.top - menuHeight) + 'px';
                     menu.classList.replace('origin-top-right', 'origin-bottom-right');
@@ -298,7 +255,6 @@
                     menu.style.top = (rect.bottom + 6) + 'px';
                     menu.classList.replace('origin-bottom-right', 'origin-top-right');
                 }
-
                 setTimeout(() => {
                     menu.classList.remove('opacity-0', 'scale-95');
                     menu.classList.add('opacity-100', 'scale-100');
@@ -308,9 +264,7 @@
             function closeMenu(menu) {
                 menu.classList.remove('opacity-100', 'scale-100');
                 menu.classList.add('opacity-0', 'scale-95');
-                setTimeout(() => {
-                    menu.classList.add('hidden');
-                }, 150);
+                setTimeout(() => menu.classList.add('hidden'), 150);
             }
         });
     </script>

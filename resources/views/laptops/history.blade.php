@@ -8,12 +8,9 @@
                 <p class="text-sm text-slate-500 mt-1">Generated on {{ now()->format('F d, Y \a\t h:i A') }}</p>
             </div>
             <div class="flex space-x-3">
-                <a href="{{ route('laptops.index') }}"
-                    class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 bg-white hover:bg-slate-50 text-sm font-medium transition-colors">&larr;
-                    Back</a>
-
+                <a href="{{ route('laptops.index') }}" class="btn btn-secondary">&larr; Back</a>
                 <a href="{{ route('laptops.history.pdf', $laptop) }}" target="_blank"
-                    class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow-sm hover:bg-slate-800 text-sm font-medium transition-colors flex items-center">
+                    class="btn btn-primary hover:!bg-slate-800 !bg-slate-900">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
@@ -31,11 +28,9 @@
                     @if ($laptop->laptop_photo)
                         <div class="relative group cursor-zoom-in overflow-hidden rounded-lg border border-slate-200 bg-white"
                             onclick="openImageModal('{{ $laptop->photo_data_url }}')">
-
                             <img src="{{ $laptop->photo_data_url }}"
                                 class="w-full h-auto object-contain transition-transform duration-300 group-hover:scale-105"
                                 alt="Laptop Photo">
-
                             <div
                                 class="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/10 transition-colors flex items-center justify-center">
                                 <svg class="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity"
@@ -72,6 +67,7 @@
                         </button>
                     </div>
                 </div>
+
                 <div class="md:col-span-3 grid grid-cols-2 md:grid-cols-3 gap-y-8 gap-x-6">
                     <div class="flex flex-col">
                         <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold mb-2">Device
@@ -95,14 +91,10 @@
                         <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold mb-2">Identification
                         </p>
                         <div class="space-y-1">
-                            <p class="text-sm">
-                                <span class="text-slate-400 font-medium">SN:</span>
-                                <span class="font-mono font-bold text-slate-800">{{ $laptop->serial_number }}</span>
-                            </p>
-                            <p class="text-sm">
-                                <span class="text-slate-400 font-medium">FA:</span>
-                                <span class="text-slate-700 font-medium">{{ $laptop->laptop_fa_code ?? 'N/A' }}</span>
-                            </p>
+                            <p class="text-sm"><span class="text-slate-400 font-medium">SN:</span> <span
+                                    class="font-mono font-bold text-slate-800">{{ $laptop->serial_number }}</span></p>
+                            <p class="text-sm"><span class="text-slate-400 font-medium">FA:</span> <span
+                                    class="text-slate-700 font-medium">{{ $laptop->laptop_fa_code ?? 'N/A' }}</span></p>
                         </div>
                     </div>
 
@@ -119,8 +111,7 @@
                                 <div class="mt-2 p-2 bg-blue-50 rounded-lg border border-blue-100">
                                     <p class="text-[9px] text-blue-500 uppercase font-bold leading-none mb-1">User</p>
                                     <p class="text-xs font-bold text-blue-900 truncate">
-                                        {{ $laptop->currentAssignment->employee?->full_name ?? 'Unknown User' }}
-                                    </p>
+                                        {{ $laptop->currentAssignment->employee?->full_name ?? 'Unknown User' }}</p>
                                 </div>
                             @endif
                         </div>
@@ -147,8 +138,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            <p class="text-sm font-semibold text-slate-800">
-                                {{ $laptop->ramSize->value ?? 'N/A' }}
+                            <p class="text-sm font-semibold text-slate-800">{{ $laptop->ramSize->value ?? 'N/A' }}
                                 <span
                                     class="text-[10px] text-slate-500 font-normal ml-1">({{ $laptop->ram_type }})</span>
                             </p>
@@ -163,8 +153,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                             </svg>
-                            <p class="text-sm font-semibold text-slate-800">
-                                {{ $laptop->storageSize->value ?? 'N/A' }}
+                            <p class="text-sm font-semibold text-slate-800">{{ $laptop->storageSize->value ?? 'N/A' }}
                                 <span
                                     class="text-[10px] text-slate-500 font-normal ml-1">({{ $laptop->storage_type }})</span>
                             </p>
@@ -184,8 +173,7 @@
                         <span class="text-lg">{{ $event->icon }}</span>
                     </div>
 
-                    <div
-                        class="bg-white border border-slate-200 rounded-lg p-5 shadow-sm print:shadow-none print:border-slate-300">
+                    <div class="card p-5 print:shadow-none print:border-slate-300">
                         <div class="flex justify-between items-start mb-2">
                             <div>
                                 <span
@@ -207,16 +195,13 @@
                 </div>
             @endforeach
         </div>
-
     </div>
     <script>
         function openImageModal(src) {
             const modal = document.getElementById('imageZoomModal');
-            const img = document.getElementById('zoomedImage');
-            img.src = src;
+            document.getElementById('zoomedImage').src = src;
             modal.classList.remove('hidden');
             modal.classList.add('flex');
-            // Prevent scrolling on the body while zoomed
             document.body.style.overflow = 'hidden';
         }
 
@@ -224,11 +209,8 @@
             const modal = document.getElementById('imageZoomModal');
             modal.classList.add('hidden');
             modal.classList.remove('flex');
-            // Re-enable scrolling
             document.body.style.overflow = 'auto';
         }
-
-        // Close on 'Esc' key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeImageModal();
         });

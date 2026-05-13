@@ -14,8 +14,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
 
             <div class="lg:col-span-1 space-y-6">
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-
+                <div class="card">
                     <div class="h-48 bg-slate-50 border-b border-slate-100 flex items-center justify-center p-4">
                         @if ($laptop->laptop_photo)
                             <img src="{{ $laptop->photo_data_url }}" alt="Laptop"
@@ -87,9 +86,7 @@
                             <div>
                                 <p class="text-[11px] text-slate-500 mb-1">Status</p>
                                 <span
-                                    class="inline-flex px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800">
-                                    {{ $laptop->status }}
-                                </span>
+                                    class="inline-flex px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800">{{ $laptop->status }}</span>
                             </div>
                             <div>
                                 <p class="text-[11px] text-slate-500">Purchased on</p>
@@ -97,25 +94,22 @@
                                     {{ $laptop->purchase_date->format('M d, Y') }}</p>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
 
             <div class="lg:col-span-2 space-y-8">
-
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div class="p-6 border-b border-slate-100">
-                        <h3 class="text-lg font-bold text-slate-900">Assign to employee</h3>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Assign to employee</h3>
                     </div>
 
                     <form action="{{ route('laptops.store_assign', $laptop) }}" method="POST">
                         @csrf
                         <div class="p-6 space-y-6">
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Select employee *</label>
-                                <select name="employee_id" required
-                                    class="w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+                                <label class="form-label">Select employee *</label>
+                                <select name="employee_id" required class="form-input">
                                     <option value="">-- Choose an active employee --</option>
                                     @foreach ($employees as $emp)
                                         <option value="{{ $emp->id }}">{{ $emp->first_name }}
@@ -125,71 +119,61 @@
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Assignment date *</label>
-                                <input type="date" name="assigned_date" 
-                                       min="{{ $minDate->format('Y-m-d') }}" 
-                                       max="{{ now()->format('Y-m-d') }}" 
-                                       value="{{ date('Y-m-d') }}" 
-                                       required class="w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+                                <label class="form-label">Assignment date *</label>
+                                <input type="date" name="assigned_date" min="{{ $minDate->format('Y-m-d') }}"
+                                    max="{{ now()->format('Y-m-d') }}" value="{{ date('Y-m-d') }}" required
+                                    class="form-input">
                                 <p class="text-xs text-slate-500 mt-1">Cannot be earlier than
                                     {{ $minDate->format('M d, Y') }} (purchase or last return date).</p>
                             </div>
                         </div>
 
                         <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end space-x-3">
-                            <a href="{{ route('laptops.index') }}"
-                                class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 bg-white hover:bg-slate-50 text-sm font-medium">Cancel</a>
-                            <button type="submit"
-                                class="px-5 py-2 bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-700 text-sm font-medium">Confirm
-                                assignment</button>
+                            <a href="{{ route('laptops.index') }}" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary px-5">Confirm assignment</button>
                         </div>
                     </form>
                 </div>
 
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div class="p-6 border-b border-slate-100 flex justify-between items-center">
-                        <h3 class="text-lg font-bold text-slate-900">Device history</h3>
+                <div class="card">
+                    <div class="card-header flex justify-between items-center !py-4">
+                        <h3 class="card-title">Device history</h3>
                         <span
-                            class="text-xs font-medium bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full">{{ $laptop->assignments->count() }}
+                            class="text-xs font-medium bg-slate-200 text-slate-600 px-2.5 py-1 rounded-full">{{ $laptop->assignments->count() }}
                             records</span>
                     </div>
 
                     <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-slate-200">
-                            <thead class="bg-slate-50">
+                        <table class="table-base">
+                            <thead class="table-head">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">
-                                        Employee</th>
-                                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">
-                                        Assigned</th>
-                                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">
-                                        Returned</th>
-                                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">
-                                        Condition</th>
-                                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Notes
-                                    </th>
+                                    <th class="table-th">Employee</th>
+                                    <th class="table-th">Assigned</th>
+                                    <th class="table-th">Returned</th>
+                                    <th class="table-th">Condition</th>
+                                    <th class="table-th">Notes</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 bg-white">
                                 @forelse($laptop->assignments()->latest('assigned_date')->get() as $history)
-                                    <tr class="hover:bg-slate-50">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
+                                    <tr class="table-row">
+                                        <td class="table-td text-sm font-medium text-slate-900">
                                             {{ $history->employee->first_name }} {{ $history->employee->last_name }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                                            {{ $history->assigned_date->format('M d, yyyy') }}
+                                        <td class="table-td text-sm text-slate-600">
+                                            {{ $history->assigned_date->format('M d, Y') }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                                        <td class="table-td text-sm text-slate-600">
                                             @if ($history->returned_date)
-                                                {{ $history->returned_date->format('M d, yyyy') }}
+                                                {{ $history->returned_date->format('M d, Y') }}
                                             @else
                                                 <span class="text-blue-600 font-medium">Current</span>
                                             @endif
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                                        <td class="table-td text-sm text-slate-600">
                                             {{ $history->return_condition ?? '-' }}
                                         </td>
-                                        <td class="px-6 py-4 text-sm text-slate-600 truncate max-w-xs">
+                                        <td class="table-td text-sm text-slate-600 truncate max-w-xs">
                                             {{ $history->return_reason ?? '-' }}
                                         </td>
                                     </tr>
@@ -204,7 +188,6 @@
                         </table>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>

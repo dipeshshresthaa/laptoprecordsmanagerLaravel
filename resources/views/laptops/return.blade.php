@@ -7,7 +7,8 @@
                         class="font-mono font-medium text-slate-800">{{ $laptop->serial_number }}</span></p>
             </div>
             <a href="{{ route('laptops.index') }}"
-                class="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors">&larr; Back to inventory</a>
+                class="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors">&larr; Back to
+                inventory</a>
         </div>
 
         <div class="bg-blue-50 border border-blue-100 rounded-xl p-5 mb-6">
@@ -27,25 +28,21 @@
             </div>
         </div>
 
-        <form action="{{ route('laptops.store_return', $laptop) }}" method="POST"
-            class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <form action="{{ route('laptops.store_return', $laptop) }}" method="POST" class="card">
             @csrf
 
             <div class="p-6 space-y-6">
-
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Return date *</label>
+                        <label class="form-label">Return date *</label>
                         <input type="date" name="returned_date"
                             min="{{ $activeAssignment->assigned_date->format('Y-m-d') }}"
-                            max="{{ now()->format('Y-m-d') }}" value="{{ date('Y-m-d') }}" required
-                            class="w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm transition-colors">
+                            max="{{ now()->format('Y-m-d') }}" value="{{ date('Y-m-d') }}" required class="form-input">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Next laptop status *</label>
-                        <select name="next_status" required
-                            class="w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm transition-colors">
+                        <label class="form-label">Next laptop status *</label>
+                        <select name="next_status" required class="form-input">
                             <option value="Available">Available (Ready for next user)</option>
                             <option value="In repair">In repair (Needs maintenance)</option>
                             <option value="Disposed">Disposed (End of lifecycle)</option>
@@ -55,9 +52,8 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Physical condition *</label>
-                    <select name="return_condition" required
-                        class="w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm transition-colors">
+                    <label class="form-label">Physical condition *</label>
+                    <select name="return_condition" required class="form-input">
                         <option value="">-- Select condition --</option>
                         <option value="Excellent">Excellent (No signs of wear)</option>
                         <option value="Good">Good (Normal wear and tear)</option>
@@ -68,12 +64,10 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Return reason / Additional
-                        notes</label>
+                    <label class="form-label">Return reason / Additional notes</label>
                     <textarea name="return_reason" rows="3" placeholder="e.g. Employee resigned, laptop upgrade, damaged screen..."
-                        class="w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm transition-colors">{{ old('return_reason') }}</textarea>
+                        class="form-input">{{ old('return_reason') }}</textarea>
                 </div>
-
             </div>
 
             <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
@@ -86,10 +80,8 @@
                 </span>
 
                 <div class="flex space-x-3">
-                    <a href="{{ route('laptops.index') }}"
-                        class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 bg-white hover:bg-slate-50 text-sm font-medium transition-colors">Cancel</a>
-                    <button type="submit"
-                        class="px-5 py-2 bg-amber-500 text-white rounded-lg shadow-sm hover:bg-amber-600 text-sm font-medium transition-colors">Process
+                    <a href="{{ route('laptops.index') }}" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn !bg-amber-500 !text-white hover:!bg-amber-600">Process
                         return</button>
                 </div>
             </div>
