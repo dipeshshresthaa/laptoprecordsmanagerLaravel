@@ -112,8 +112,8 @@
                                 <select name="employee_id" required class="form-input">
                                     <option value="">-- Choose an active employee --</option>
                                     @foreach ($employees as $emp)
-                                        <option value="{{ $emp->id }}">{{ $emp->first_name }}
-                                            {{ $emp->last_name }} ({{ $emp->department }})</option>
+                                        <option value="{{ $emp->id }}">{{ $emp->full_name }}
+                                            ({{ $emp->emp_code }})</option>
                                     @endforeach
                                 </select>
                             </div>
