@@ -21,6 +21,28 @@
             </div>
         @endif
 
+        @if ($errors->any())
+            <div class="bg-rose-50 border-l-4 border-rose-500 p-4 mb-6 rounded-r-lg">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-rose-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-rose-800">Please fix the following errors:</h3>
+                        <ul class="mt-2 text-sm text-rose-700 list-disc list-inside">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         <form action="{{ $laptop->exists ? route('laptops.update', $laptop) : route('laptops.store') }}" method="POST"
             enctype="multipart/form-data" class="card">
             @csrf
@@ -154,7 +176,8 @@
                             <button type="button" onclick="openLookupModal('StorageSize')"
                                 class="text-blue-600 hover:text-blue-800 text-xs font-bold">+ New</button>
                         </div>
-                        <select name="storage_size_id" id="StorageSize_select" {{ $disabled }} class="form-input">
+                        <select name="storage_size_id" id="StorageSize_select" {{ $disabled }}
+                            class="form-input">
                             <option value="">-- Select --</option>
                             @foreach ($storageSizes as $storage)
                                 <option value="{{ $storage->id }}"
