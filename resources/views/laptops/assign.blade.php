@@ -224,4 +224,67 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // --- Image Swapping Logic ---
+        function swapImage(newSrc, clickedButton) {
+            // Change the main image source
+            const mainImage = document.getElementById('main-gallery-image');
+            mainImage.src = newSrc;
+
+            // Reset styling on all thumbnail buttons
+            const allThumbnails = document.querySelectorAll('.thumbnail-btn');
+            allThumbnails.forEach(btn => {
+                btn.classList.remove('border-blue-500', 'shadow-md', 'opacity-100');
+                btn.classList.add('border-transparent', 'opacity-70');
+            });
+
+            // Highlight the clicked thumbnail
+            clickedButton.classList.remove('border-transparent', 'opacity-70');
+            clickedButton.classList.add('border-blue-500', 'shadow-md', 'opacity-100');
+        }
+
+        // --- E-commerce Zoom Logic ---
+        function zoomImage(event, element) {
+            // Get the bounding rectangle of the image container
+            const rect = element.parentElement.getBoundingClientRect();
+
+            // Calculate the mouse position relative to the container (0 to 1)
+            const x = (event.clientX - rect.left) / rect.width;
+            const y = (event.clientY - rect.top) / rect.height;
+
+            // Convert the 0-1 values to percentages for the CSS transform-origin property
+            const originX = (x * 100) + '%';
+            const originY = (y * 100) + '%';
+
+            // Apply the new origin so the image scales toward the mouse pointer
+            element.style.transformOrigin = `${originX} ${originY}`;
+        }
+
+        function resetZoom(element) {
+            // Reset the origin to the center when the mouse leaves
+            element.style.transformOrigin = 'center center';
+        }
+    </script>
+
+    <style>
+        /* Optional: Hide scrollbar for the thumbnail row but keep functionality */
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
 </x-layout>
