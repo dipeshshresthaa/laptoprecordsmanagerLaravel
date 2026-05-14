@@ -30,7 +30,7 @@
                             onclick="openImageModal('{{ $laptop->photo_data_url }}')">
                             <img src="{{ $laptop->photo_data_url }}"
                                 class="w-full h-auto object-contain transition-transform duration-300 group-hover:scale-105"
-                                alt="Laptop Photo">
+                                alt="Laptop photo">
                             <div
                                 class="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/10 transition-colors flex items-center justify-center">
                                 <svg class="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity"
