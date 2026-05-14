@@ -108,7 +108,7 @@ class LaptopController extends Controller
 
         // NEW: Convert uploaded image to raw binary and store in DB
         if ($request->hasFile('photo')) {
-            $laptop->laptop_photo = file_get_contents($request->file('photo')->getRealPath());
+            $laptop->laptop_photo = base64_encode(file_get_contents($request->file('photo')->getRealPath()));
         }
         if (! $laptop->exists) {
             $laptop->created_by_id = Auth::id();
