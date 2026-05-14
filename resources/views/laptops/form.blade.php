@@ -288,15 +288,6 @@
     </form>
     </div>
 
-    @if (!$laptop->is_disposed)
-        <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end space-x-3">
-            <a href="{{ route('laptops.index') }}" class="btn btn-secondary">Cancel</a>
-            <button type="submit" class="btn btn-primary px-5 py-2">Save laptop</button>
-        </div>
-    @endif
-    </form>
-    </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const faInput = document.getElementById('fa_code_input');
