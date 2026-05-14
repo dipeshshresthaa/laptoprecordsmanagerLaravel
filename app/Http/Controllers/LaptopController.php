@@ -7,6 +7,7 @@ use App\Models\SystemLookup;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class LaptopController extends Controller
 {
@@ -91,7 +92,11 @@ class LaptopController extends Controller
     private function saveLaptop(Request $request, Laptop $laptop)
     {
         $request->validate([
-            'serial_number' => 'required|string|unique:laptops,serial_number,'.$laptop->id,
+            'serial_number' => [
+                'required',
+                'string',
+                Rule::unique('laptops', 'serial_number')->ignore($laptop->id),
+            ],
             'brand_id' => 'required|exists:system_lookups,id',
             'model_id' => 'required|exists:system_lookups,id',
             'purchase_date' => 'required|date|before_or_equal:today',
