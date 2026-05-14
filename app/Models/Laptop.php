@@ -21,10 +21,19 @@ class Laptop extends Model
     }
 
     // NEW: Converts the raw binary database data into an image for the browser
+    // NEW: Converts the raw binary database data into an image for the browser
     public function getPhotoDataUrlAttribute(): ?string
     {
         if ($this->laptop_photo) {
-            return 'data:image/jpeg;base64,'.base64_encode($this->laptop_photo);
+            // 1. PostgreSQL returns bytea columns as stream resources.
+            // We must convert the resource stream back into a string.
+            $photoData = is_resource($this->laptop_photo)
+                ? stream_get_contents($this->laptop_photo)
+                : $this->laptop_photo;
+
+            // 2. Because the controller is now saving the file as a base64 string,
+            // it is already safely encoded. We can just attach it directly to the Data URI!
+            return 'data:image/jpeg;base64,'.$photoData;
         }
 
         return null;
