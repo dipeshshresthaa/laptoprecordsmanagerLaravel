@@ -20,28 +20,7 @@ class Laptop extends Model
         return $this->status === 'Disposed';
     }
 
-    // NEW: Converts the raw binary database data into an image for the browser
-    public function getPhotoDataUrlAttribute(): ?string
-    {
-        if ($this->laptop_photo) {
-            $photoData = $this->laptop_photo;
-
-            // If Postgres returned a stream, we must extract it safely
-            if (is_resource($photoData)) {
-                // 1. Rewind the pointer to the start so it can be read multiple times!
-                rewind($photoData);
-
-                // 2. Read the contents
-                $photoData = stream_get_contents($photoData);
-            }
-
-            return 'data:image/jpeg;base64,'.$photoData;
-        }
-
-        return null;
-    }
-
-    public function brand(): BelongsTo
+        public function brand(): BelongsTo
     {
         return $this->belongsTo(SystemLookup::class, 'brand_id');
     }
@@ -100,5 +79,10 @@ class Laptop extends Model
     public function upgrades(): HasMany
     {
         return $this->hasMany(LaptopUpgrade::class);
+    }
+
+    public function photos(): HasMany
+    {
+        return $this->hasMany(LaptopPhoto::class);
     }
 }

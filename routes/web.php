@@ -99,6 +99,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::post('lookups/quick-store', [SystemLookupController::class, 'quickStore'])->name('lookups.quick-store');
         Route::get('/api/laptops/fa-suggestions', [LaptopController::class, 'getNextFaSuggestions'])->name('laptops.fa-suggestions');
+        Route::delete('/laptops/photos/{id}', [LaptopController::class, 'deletePhoto'])->name('laptops.photos.destroy');
 
         // Employees
         Route::get('employees/{employee}/deed', [EmployeeController::class, 'viewDeed'])->name('employees.deed');

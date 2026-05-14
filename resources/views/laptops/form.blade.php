@@ -209,38 +209,61 @@
                     </div>
 
                     <div>
-                        <label class="form-label">Laptop photo (Max 2MB)</label>
-                        <input type="file" name="photo" accept=".jpg,.jpeg,.png" {{ $disabled }}
-                            class="form-file-input !bg-blue-50 !text-blue-700 hover:!bg-blue-100 cursor-pointer">
+                        <label class="form-label">Laptop photos (Max 2MB each)</label>
+                        <input type="file" name="photos[]" accept=".jpg,.jpeg,.png" multiple {{ $disabled }}
+                            class="form-file-input !bg-blue-50 !text-blue-700 hover:!bg-blue-100 cursor-pointer w-full text-sm">
+                        <p class="text-xs text-slate-500 mt-1">You can select multiple files at once.</p>
 
-                        @if ($laptop->laptop_photo)
-                            <div class="mt-4 p-2 bg-slate-50 rounded-lg border border-slate-200 inline-block">
-                                <img src="{{ $laptop->photo_data_url }}" alt="Laptop Photo"
-                                    class="h-40 rounded shadow-sm object-cover">
-                                <p class="text-xs text-slate-500 mt-2 text-center">Current image stored in database</p>
-                            </div>
-                        @else
-                            <div
-                                class="mt-4 p-8 bg-slate-50 rounded-lg border border-dashed border-slate-300 flex flex-col items-center justify-center text-slate-400">
-                                <svg class="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                    </path>
-                                </svg>
-                                <span class="text-sm">No photo uploaded</span>
+                        @if ($laptop->photos && $laptop->photos->count() > 0)
+                            <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                                @foreach ($laptop->photos as $photo)
+                                    <div class="relative group rounded-lg overflow-hidden border border-slate-200">
+                                        <img src="{{ Storage::url($photo->photo_path) }}" alt="Laptop Photo"
+                                            class="h-24 w-full object-cover">
+
+                                        @if (!$laptop->is_disposed)
+                                            <button type="button" onclick="deletePhoto({{ $photo->id }})"
+                                                class="absolute top-1 right-1 bg-white/90 text-rose-600 rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-50 shadow-sm">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                                    </path>
+                                                </svg>
+                                            </button>
+                                        @endif
+                                    </div>
+                                @endforeach
                             </div>
                         @endif
                     </div>
                 </div>
-            </div>
 
-            @if (!$laptop->is_disposed)
-                <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end space-x-3">
-                    <a href="{{ route('laptops.index') }}" class="btn btn-secondary">Cancel</a>
-                    <button type="submit" class="btn btn-primary px-5 py-2">Save laptop</button>
-                </div>
-            @endif
+                <script>
+                    function deletePhoto(id) {
+                        if (confirm('Are you sure you want to delete this photo?')) {
+                            const form = document.createElement('form');
+                            form.method = 'POST';
+                            form.action = `/laptops/photos/${id}`;
+                            form.innerHTML = `<input type="hidden" name="_method" value="DELETE">
+                              <input type="hidden" name="_token" value="{{ csrf_token() }}">`;
+                            document.body.appendChild(form);
+                            form.submit();
+                        }
+                    }
+                </script>
+            </div>
         </form>
+    </div>
+
+    @if (!$laptop->is_disposed)
+        <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end space-x-3">
+            <a href="{{ route('laptops.index') }}" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary px-5 py-2">Save laptop</button>
+        </div>
+    @endif
+    </form>
     </div>
 
     <script>

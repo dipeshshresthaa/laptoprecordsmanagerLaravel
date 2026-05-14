@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Laptop;
+use App\Models\LaptopPhoto;
 use App\Models\SystemLookup;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class LaptopController extends Controller
@@ -100,16 +102,12 @@ class LaptopController extends Controller
             'brand_id' => 'required|exists:system_lookups,id',
             'model_id' => 'required|exists:system_lookups,id',
             'purchase_date' => 'required|date|before_or_equal:today',
-            'photo' => 'nullable|image|max:2048', // Max 2MB
+            'photos.*' => 'nullable|image|max:2048', // Max 2MB
         ]);
 
-        // Exclude 'photo' from mass assignment so we can handle the binary conversion manually
-        $laptop->fill($request->except(['photo', '_token', '_method', 'status']));
+        // Exclude 'photos' from mass assignment so we can handle them manually
+        $laptop->fill($request->except(['photos', '_token', '_method', 'status']));
 
-        // NEW: Convert uploaded image to raw binary and store in DB
-        if ($request->hasFile('photo')) {
-            $laptop->laptop_photo = base64_encode(file_get_contents($request->file('photo')->getRealPath()));
-        }
         if (! $laptop->exists) {
             $laptop->created_by_id = Auth::id();
             $laptop->status = 'Available';
@@ -118,15 +116,28 @@ class LaptopController extends Controller
             // Status changes for existing laptops will be handled by the new event system below
         }
 
-        if (! $laptop->exists) {
-            $laptop->created_by_id = Auth::id();
-        } else {
-            $laptop->modified_by_id = Auth::id();
-        }
-
         $laptop->save();
 
+        // *NEW*: Store multiple photos to the filesystem
+        if ($request->hasFile('photos')) {
+            foreach ($request->file('photos') as $photo) {
+                // Stores in storage/app/public/laptop_photos
+                $path = $photo->store('laptop_photos', 'public');
+                $laptop->photos()->create(['photo_path' => $path]);
+            }
+        }
+
         return redirect()->route('laptops.index')->with('success', 'Laptop saved successfully.');
+    }
+
+    // *NEW*: Method to delete a specific photo
+    public function deletePhoto($id)
+    {
+        $photo = LaptopPhoto::findOrFail($id);
+        Storage::disk('public')->delete($photo->photo_path);
+        $photo->delete();
+
+        return back()->with('success', 'Photo removed successfully.');
     }
 
     // API Endpoint for Cascading Dropdowns
