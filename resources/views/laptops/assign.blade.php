@@ -16,27 +16,83 @@
             <div class="lg:col-span-1 space-y-6">
                 <div class="card">
                     <div class="h-48 bg-slate-50 border-b border-slate-100 flex items-center justify-center p-4">
-                        @php $primaryPhoto = $laptop->photos->first(); @endphp
+                        <div
+                            class="mb-6 flex flex-col md:flex-row gap-6 bg-white p-4 rounded-xl border border-slate-200">
 
-                        @if ($primaryPhoto)
-                            <img src="{{ Storage::url($primaryPhoto->photo_path) }}" alt="Thumbnail"
-                                class="h-16 w-16 object-cover rounded shadow-sm border border-slate-200">
-                        @else
-                            <div
-                                class="h-16 w-16 bg-slate-100 rounded flex items-center justify-center text-slate-400 border border-slate-200 shadow-sm">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                    </path>
-                                </svg>
+                            <div class="w-full md:w-1/3 flex flex-col items-center">
+                                @if ($laptop->photos && $laptop->photos->count() > 0)
+
+                                    <div class="relative w-full aspect-square overflow-hidden rounded-lg border border-slate-200 group bg-slate-50 mb-3"
+                                        id="main-image-container">
+                                        @php $firstPhotoUrl = Storage::url($laptop->photos->first()->photo_path); @endphp
+                                        <img src="{{ $firstPhotoUrl }}" alt="Laptop Main View" id="main-gallery-image"
+                                            class="w-full h-full object-contain transition-transform duration-500 ease-in-out group-hover:scale-[1.7] origin-center cursor-crosshair"
+                                            onmousemove="zoomImage(event, this)" onmouseleave="resetZoom(this)">
+                                    </div>
+
+                                    @if ($laptop->photos->count() > 1)
+                                        <div class="flex gap-2 w-full overflow-x-auto pb-2 custom-scrollbar">
+                                            @foreach ($laptop->photos as $index => $photo)
+                                                @php $photoUrl = Storage::url($photo->photo_path); @endphp
+                                                <button type="button" onclick="swapImage('{{ $photoUrl }}', this)"
+                                                    class="thumbnail-btn flex-shrink-0 w-16 h-16 rounded border-2 overflow-hidden transition-all {{ $index === 0 ? 'border-blue-500 shadow-md' : 'border-transparent hover:border-slate-300 opacity-70 hover:opacity-100' }}">
+                                                    <img src="{{ $photoUrl }}" alt="Thumbnail {{ $index + 1 }}"
+                                                        class="w-full h-full object-cover">
+                                                </button>
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                @else
+                                    <div
+                                        class="w-full aspect-square bg-slate-100 rounded-lg flex flex-col items-center justify-center text-slate-400 border border-slate-200">
+                                        <svg class="w-12 h-12 mb-2" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                            </path>
+                                        </svg>
+                                        <span class="text-sm font-medium">No Images Available</span>
+                                    </div>
+                                @endif
                             </div>
-                        @endif
+
+                            <div class="w-full md:w-2/3 flex flex-col justify-center space-y-3">
+                                <div>
+                                    <h2 class="text-2xl font-bold text-slate-900">
+                                        {{ $laptop->brand->value ?? 'Unknown' }}
+                                        {{ $laptop->model->value ?? 'Unknown' }}</h2>
+                                    <p class="text-sm text-slate-500 font-mono mt-1">S/N: {{ $laptop->serial_number }} |
+                                        FA Code: {{ $laptop->laptop_fa_code ?? 'N/A' }}</p>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4 text-sm mt-4">
+                                    <div><span
+                                            class="text-slate-500 block text-xs uppercase tracking-wider">Processor</span><span
+                                            class="font-medium text-slate-800">{{ $laptop->processor->value ?? 'N/A' }}</span>
+                                    </div>
+                                    <div><span
+                                            class="text-slate-500 block text-xs uppercase tracking-wider">RAM</span><span
+                                            class="font-medium text-slate-800">{{ $laptop->ramSize->value ?? 'N/A' }}
+                                            {{ $laptop->ram_type }}</span></div>
+                                    <div><span
+                                            class="text-slate-500 block text-xs uppercase tracking-wider">Storage</span><span
+                                            class="font-medium text-slate-800">{{ $laptop->storageSize->value ?? 'N/A' }}
+                                            {{ $laptop->storage_type }}</span></div>
+                                    <div><span
+                                            class="text-slate-500 block text-xs uppercase tracking-wider">Status</span>
+                                        <span
+                                            class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">{{ $laptop->status }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="p-5">
                         <p class="text-sm font-semibold text-slate-500">{{ $laptop->brand->value ?? 'Unknown Brand' }}
                         </p>
-                        <h3 class="text-xl font-bold text-slate-900 mb-6">{{ $laptop->model->value ?? 'Unknown Model' }}
+                        <h3 class="text-xl font-bold text-slate-900 mb-6">
+                            {{ $laptop->model->value ?? 'Unknown Model' }}
                         </h3>
 
                         <h4
@@ -69,7 +125,8 @@
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <p class="text-[11px] text-slate-500">RAM</p>
-                                    <p class="text-sm font-medium text-slate-900">{{ $laptop->ramSize->value ?? 'N/A' }}
+                                    <p class="text-sm font-medium text-slate-900">
+                                        {{ $laptop->ramSize->value ?? 'N/A' }}
                                         <span class="text-xs text-slate-400 font-normal">{{ $laptop->ram_type }}</span>
                                     </p>
                                 </div>
@@ -189,7 +246,8 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="px-6 py-8 text-center text-sm text-slate-500 italic">
+                                        <td colspan="5"
+                                            class="px-6 py-8 text-center text-sm text-slate-500 italic">
                                             No assignment history found for this device.
                                         </td>
                                     </tr>
@@ -201,4 +259,67 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // --- Image Swapping Logic ---
+        function swapImage(newSrc, clickedButton) {
+            // Change the main image source
+            const mainImage = document.getElementById('main-gallery-image');
+            mainImage.src = newSrc;
+
+            // Reset styling on all thumbnail buttons
+            const allThumbnails = document.querySelectorAll('.thumbnail-btn');
+            allThumbnails.forEach(btn => {
+                btn.classList.remove('border-blue-500', 'shadow-md', 'opacity-100');
+                btn.classList.add('border-transparent', 'opacity-70');
+            });
+
+            // Highlight the clicked thumbnail
+            clickedButton.classList.remove('border-transparent', 'opacity-70');
+            clickedButton.classList.add('border-blue-500', 'shadow-md', 'opacity-100');
+        }
+
+        // --- E-commerce Zoom Logic ---
+        function zoomImage(event, element) {
+            // Get the bounding rectangle of the image container
+            const rect = element.parentElement.getBoundingClientRect();
+
+            // Calculate the mouse position relative to the container (0 to 1)
+            const x = (event.clientX - rect.left) / rect.width;
+            const y = (event.clientY - rect.top) / rect.height;
+
+            // Convert the 0-1 values to percentages for the CSS transform-origin property
+            const originX = (x * 100) + '%';
+            const originY = (y * 100) + '%';
+
+            // Apply the new origin so the image scales toward the mouse pointer
+            element.style.transformOrigin = `${originX} ${originY}`;
+        }
+
+        function resetZoom(element) {
+            // Reset the origin to the center when the mouse leaves
+            element.style.transformOrigin = 'center center';
+        }
+    </script>
+
+    <style>
+        /* Optional: Hide scrollbar for the thumbnail row but keep functionality */
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
 </x-layout>
