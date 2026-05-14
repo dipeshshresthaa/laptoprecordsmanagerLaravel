@@ -269,15 +269,23 @@
                             const form = document.createElement('form');
                             form.method = 'POST';
                             form.action = `/laptops/photos/${id}`;
-                            form.innerHTML = `<input type="hidden" name="_method" value="DELETE">
-                              <input type="hidden" name="_token" value="{{ csrf_token() }}">`;
+                            form.innerHTML =
+                                `<input type="hidden" name="_method" value="DELETE">
+                                                      <input type="hidden" name="_token" value="{{ csrf_token() }}">`;
                             document.body.appendChild(form);
                             form.submit();
                         }
                     }
                 </script>
             </div>
-        </form>
+    </div>
+    @if (!$laptop->is_disposed)
+        <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end space-x-3">
+            <a href="{{ route('laptops.index') }}" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary px-5 py-2">Save laptop</button>
+        </div>
+    @endif
+    </form>
     </div>
 
     @if (!$laptop->is_disposed)
