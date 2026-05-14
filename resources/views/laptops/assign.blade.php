@@ -16,11 +16,20 @@
             <div class="lg:col-span-1 space-y-6">
                 <div class="card">
                     <div class="h-48 bg-slate-50 border-b border-slate-100 flex items-center justify-center p-4">
-                        @if ($laptop->laptop_photo)
-                            <img src="{{ $laptop->photo_data_url }}" alt="Laptop"
-                                class="max-h-full object-contain rounded">
+                        @php $primaryPhoto = $laptop->photos->first(); @endphp
+
+                        @if ($primaryPhoto)
+                            <img src="{{ Storage::url($primaryPhoto->photo_path) }}" alt="Thumbnail"
+                                class="h-16 w-16 object-cover rounded shadow-sm border border-slate-200">
                         @else
-                            <span class="text-slate-400 italic text-sm">No image available</span>
+                            <div
+                                class="h-16 w-16 bg-slate-100 rounded flex items-center justify-center text-slate-400 border border-slate-200 shadow-sm">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                            </div>
                         @endif
                     </div>
 
@@ -113,7 +122,8 @@
                                     <option value="">-- Choose an active employee --</option>
                                     @foreach ($employees as $emp)
                                         <option value="{{ $emp->id }}">{{ $emp->full_name }}
-                                            ({{ $emp->emp_code }})</option>
+                                            ({{ $emp->emp_code }})
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>

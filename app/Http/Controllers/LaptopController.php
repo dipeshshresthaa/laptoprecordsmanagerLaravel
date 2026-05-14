@@ -169,7 +169,7 @@ class LaptopController extends Controller
 
     private function getTimelineData(Laptop $laptop)
     {
-        $laptop->load(['brand', 'model', 'processor', 'ramSize', 'storageSize', 'screenSize', 'assignments.employee', 'repairs', 'upgrades']);
+        $laptop->load(['brand', 'model', 'processor', 'ramSize', 'storageSize', 'screenSize', 'assignments.employee', 'repairs', 'upgrades', 'photos']);
         $timeline = collect();
 
         // Priority logic for same-day events (Lower number = happens earlier in the day)

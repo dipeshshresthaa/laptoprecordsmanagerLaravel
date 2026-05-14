@@ -24,31 +24,24 @@
         <div
             class="bg-slate-50 border border-slate-200 rounded-xl p-6 mb-8 print:border-slate-300 print:bg-transparent print:break-inside-avoid">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div class="md:col-span-1">
-                    @if ($laptop->laptop_photo)
-                        <div class="relative group cursor-zoom-in overflow-hidden rounded-lg border border-slate-200 bg-white"
-                            onclick="openImageModal('{{ $laptop->photo_data_url }}')">
-                            <img src="{{ $laptop->photo_data_url }}"
-                                class="w-full h-auto object-contain transition-transform duration-300 group-hover:scale-105"
-                                alt="Laptop photo">
-                            <div
-                                class="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/10 transition-colors flex items-center justify-center">
-                                <svg class="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                                </svg>
-                            </div>
+                <div class="mt-6">
+                    <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-3">Hardware photos</h3>
+                    @if ($laptop->photos && $laptop->photos->count() > 0)
+                        <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+                            @foreach ($laptop->photos as $photo)
+                                <a href="{{ Storage::url($photo->photo_path) }}" target="_blank"
+                                    class="block relative group rounded-lg overflow-hidden border border-slate-200 shadow-sm">
+                                    <img src="{{ Storage::url($photo->photo_path) }}" alt="Laptop Photo"
+                                        class="h-32 w-full object-cover transition-transform duration-200 group-hover:scale-105">
+                                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors">
+                                    </div>
+                                </a>
+                            @endforeach
                         </div>
                     @else
                         <div
-                            class="w-full h-32 bg-slate-100 rounded-lg border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400">
-                            <svg class="w-8 h-8 mb-1 opacity-50" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path
-                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            <span class="text-xs font-medium uppercase tracking-wider">No Photo</span>
+                            class="p-4 bg-slate-50 border border-dashed border-slate-200 rounded-lg text-center text-sm text-slate-500">
+                            No photos available for this hardware.
                         </div>
                     @endif
                 </div>
