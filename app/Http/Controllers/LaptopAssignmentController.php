@@ -68,7 +68,10 @@ class LaptopAssignmentController extends Controller
     public function storeReturn(Request $request, Laptop $laptop)
     {
         $activeAssignment = $laptop->currentAssignment;
-
+        if (! $activeAssignment) {
+            return redirect()->route('laptops.index')
+                ->with('error', 'This laptop is not currently assigned or has already been returned.');
+        }
         $request->validate([
             // ADDED: before_or_equal:today
             'returned_date' => 'required|date|before_or_equal:today|after_or_equal:'.$activeAssignment->assigned_date->format('Y-m-d'),
