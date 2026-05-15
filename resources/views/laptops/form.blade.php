@@ -199,21 +199,7 @@
                     </div>
                 </div>
 
-                <div id="lookupModal"
-                    class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm">
-                    <div class="bg-white rounded-xl p-6 shadow-xl w-80">
-                        <h3 class="text-sm font-bold text-slate-900 uppercase mb-4">Add <span id="lookupTitle"></span>
-                        </h3>
-                        <input type="hidden" id="lookupCategory">
-                        <input type="text" id="lookupValue" class="form-input mb-4" placeholder="Enter value...">
-                        <div class="flex space-x-2">
-                            <button type="button" onclick="closeLookupModal()"
-                                class="btn btn-secondary flex-1">Cancel</button>
-                            <button type="button" onclick="submitLookup()"
-                                class="btn btn-primary flex-1">Save</button>
-                        </div>
-                    </div>
-                </div>
+
 
                 <h3 class="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-100 pb-2">Status and media
                 </h3>
@@ -286,6 +272,8 @@
         </div>
     @endif
     </form>
+
+
     </div>
 
     <script>
@@ -334,34 +322,41 @@
                     .catch(() => modelSelect.innerHTML = '<option value="">Error loading models</option>');
             });
         }
-
+        let lastFocusedElement = null; // New global variable to track focus
         function openLookupModal(category) {
+            // Store the element that opened the modal (the "+ New" button)
+            lastFocusedElement = document.activeElement;
+
             document.getElementById('lookupCategory').value = category;
             document.getElementById('lookupTitle').innerText = category.replace(/([A-Z])/g, ' $1').trim();
             document.getElementById('lookupModal').classList.remove('hidden');
             document.getElementById('lookupModal').classList.add('flex');
-            document.getElementById('lookupValue').focus();
+
+            // Focus the input inside the modal
+            setTimeout(() => {
+                document.getElementById('lookupValue').focus();
+            }, 50);
         }
 
-        function closeLookupModal() {
-            document.getElementById('lookupModal').classList.add('hidden');
-            document.getElementById('lookupModal').classList.remove('flex');
-            document.getElementById('lookupValue').value = '';
-        }
+
 
         async function submitLookup() {
             const category = document.getElementById('lookupCategory').value;
-            const value = document.getElementById('lookupValue').value.trim();
+            const valueInput = document.getElementById('lookupValue');
+            const errorDisplay = document.getElementById('lookupError');
+            const value = valueInput.value.trim();
             let parentId = null;
 
-            if (!value) return;
+            errorDisplay.classList.add('hidden');
+            valueInput.classList.remove('border-rose-500', 'ring-rose-200');
+
+            if (!value) {
+                showLookupError("Please enter a value.");
+                return;
+            }
 
             if (category === 'Model') {
                 parentId = document.getElementById('Brand_select').value;
-                if (!parentId) {
-                    alert('Please select a Brand first before adding a new Model.');
-                    return;
-                }
             }
 
             try {
@@ -372,27 +367,85 @@
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
                     body: JSON.stringify({
-                        category: category,
-                        value: value,
+                        category,
+                        value,
                         parent_id: parentId
                     })
                 });
 
                 const data = await response.json();
+
                 if (response.ok) {
                     const select = document.getElementById(category + '_select');
                     if (select) {
                         select.add(new Option(data.value, data.id, true, true));
                         select.dispatchEvent(new Event('change'));
+
+                        closeLookupModal();
+
+                        // CRITICAL: Focus the dropdown so the user can continue typing/tabbing
+                        select.focus();
                     }
-                    closeLookupModal();
                 } else {
-                    alert(data.message || 'Error: This entry might already exist.');
+                    const msg = data.errors ? Object.values(data.errors).flat()[0] : (data.message ||
+                        'Error occurred.');
+                    showLookupError(msg);
                 }
             } catch (error) {
-                console.error('Error:', error);
-                alert('A connection error occurred.');
+                showLookupError("Connection error.");
             }
         }
+
+        function closeLookupModal() {
+            document.getElementById('lookupModal').classList.add('hidden');
+            document.getElementById('lookupModal').classList.remove('flex');
+
+            const input = document.getElementById('lookupValue');
+            input.value = '';
+
+            // Return focus to the button that opened the modal
+            if (lastFocusedElement) {
+                lastFocusedElement.focus();
+            }
+        }
+
+        function handleLookupKey(event) {
+            if (event.key === "Enter") {
+                event.preventDefault(); // Stop form submission
+                submitLookup();
+            }
+        }
+
+        function showLookupError(message) {
+            const errorDisplay = document.getElementById('lookupError');
+            const valueInput = document.getElementById('lookupValue');
+
+            errorDisplay.innerText = message;
+            errorDisplay.classList.remove('hidden');
+            valueInput.classList.add('border-rose-500', 'ring-rose-200');
+
+            // Crucial: Force focus back to the input so it doesn't jump to the menu
+            valueInput.focus();
+        }
     </script>
+
+    <div id="lookupModal"
+        class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm">
+        <div class="bg-white rounded-xl p-6 shadow-xl w-80">
+            <h3 class="text-sm font-bold text-slate-900 uppercase mb-4">Add <span id="lookupTitle"></span></h3>
+
+            <input type="hidden" id="lookupCategory">
+
+            <input type="text" id="lookupValue" class="form-input" placeholder="Enter value..."
+                onkeydown="handleLookupKey(event)">
+
+            <p id="lookupError" class="text-xs text-rose-600 mt-2 hidden"></p>
+
+            <div class="flex space-x-2 mt-4">
+                <button type="button" onclick="closeLookupModal()" class="btn btn-secondary flex-1">Cancel</button>
+                <button type="button" onclick="submitLookup()" class="btn btn-primary flex-1">Save</button>
+            </div>
+        </div>
+    </div>
+
 </x-layout>

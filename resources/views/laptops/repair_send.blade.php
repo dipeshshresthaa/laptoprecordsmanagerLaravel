@@ -206,8 +206,13 @@
         <div class="bg-white rounded-xl p-6 shadow-xl w-80">
             <h3 class="text-sm font-bold text-slate-900 uppercase mb-4">Add <span id="lookupTitle"></span></h3>
             <input type="hidden" id="lookupCategory">
-            <input type="text" id="lookupValue" class="form-input mb-4" placeholder="Enter vendor name...">
-            <div class="flex space-x-2">
+
+            <input type="text" id="lookupValue" class="form-input" placeholder="Enter vendor name..."
+                onkeydown="handleLookupKey(event)">
+
+            <p id="lookupError" class="text-xs text-rose-600 mt-2 hidden"></p>
+
+            <div class="flex space-x-2 mt-4">
                 <button type="button" onclick="closeLookupModal()" class="btn btn-secondary flex-1">Cancel</button>
                 <button type="button" onclick="submitLookup()" class="btn btn-primary flex-1">Save</button>
             </div>
@@ -215,56 +220,179 @@
     </div>
 
     <script>
-        // --- Lookup Modal Logic ---
+        let lastFocusedElement = null;
+
         function openLookupModal(category) {
+            // Capture the "+ New" button that was clicked to return focus later
+            lastFocusedElement = document.activeElement;
+
             document.getElementById('lookupCategory').value = category;
             document.getElementById('lookupTitle').innerText = category;
             document.getElementById('lookupModal').classList.remove('hidden');
             document.getElementById('lookupModal').classList.add('flex');
-            document.getElementById('lookupValue').focus();
+
+            // Focus the input inside the modal
+            setTimeout(() => {
+                document.getElementById('lookupValue').focus();
+            }, 50);
         }
 
         function closeLookupModal() {
             document.getElementById('lookupModal').classList.add('hidden');
             document.getElementById('lookupModal').classList.remove('flex');
-            document.getElementById('lookupValue').value = '';
+
+            const input = document.getElementById('lookupValue');
+            input.value = '';
+            input.classList.remove('border-rose-500', 'ring-rose-200');
+            document.getElementById('lookupError').classList.add('hidden');
+
+            // Return focus to the "+ New" button
+            if (lastFocusedElement) {
+                lastFocusedElement.focus();
+            }
+        }
+
+        // Handler for Enter Key to prevent main form submission
+        function handleLookupKey(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                submitLookup();
+            }
         }
 
         async function submitLookup() {
             const category = document.getElementById('lookupCategory').value;
-            const value = document.getElementById('lookupValue').value.trim();
+            const valueInput = document.getElementById('lookupValue');
+            const errorDisplay = document.getElementById('lookupError');
+            const value = valueInput.value.trim();
 
-            if (!value) return;
+            // Reset UI state
+            errorDisplay.classList.add('hidden');
+            valueInput.classList.remove('border-rose-500', 'ring-rose-200');
+
+            if (!value) {
+                showLookupError("Please enter a value.");
+                return;
+            }
 
             try {
                 const response = await fetch("{{ route('lookups.quick-store') }}", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json' // Crucial for Laravel to return JSON errors
                     },
                     body: JSON.stringify({
-                        category: category,
-                        value: value
+                        category,
+                        value
                     })
                 });
 
+                // 1. Parse the JSON body regardless of success/fail
                 const data = await response.json();
+
                 if (response.ok) {
                     const select = document.getElementById(category + '_select');
                     if (select) {
                         select.add(new Option(data.value, data.id, true, true));
+                        select.dispatchEvent(new Event('change'));
+                        closeLookupModal();
+                        select.focus();
                     }
-                    closeLookupModal();
                 } else {
-                    alert(data.message || 'Error: This entry might already exist.');
+                    // 2. Handle Laravel Validation Errors (422)
+                    // Laravel usually returns errors in data.errors.value[0]
+                    let errorMessage = "Error occurred.";
+
+                    if (data.errors) {
+                        // Flatten the nested error object to get the first specific message
+                        errorMessage = Object.values(data.errors).flat()[0];
+                    } else if (data.message) {
+                        errorMessage = data.message;
+                    }
+
+                    showLookupError(errorMessage);
                 }
             } catch (error) {
-                console.error('Error:', error);
-                alert('A connection error occurred.');
+                // 3. This only triggers on actual network failures (DNS, Offline, etc)
+                console.error('Fetch Error:', error);
+                showLookupError("Network error. Please try again.");
+            }
+        }
+        async function submitLookup() {
+            const category = document.getElementById('lookupCategory').value;
+            const valueInput = document.getElementById('lookupValue');
+            const errorDisplay = document.getElementById('lookupError');
+            const value = valueInput.value.trim();
+
+            // Reset UI state
+            errorDisplay.classList.add('hidden');
+            valueInput.classList.remove('border-rose-500', 'ring-rose-200');
+
+            if (!value) {
+                showLookupError("Please enter a value.");
+                return;
+            }
+
+            try {
+                const response = await fetch("{{ route('lookups.quick-store') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json' // Crucial for Laravel to return JSON errors
+                    },
+                    body: JSON.stringify({
+                        category,
+                        value
+                    })
+                });
+
+                // 1. Parse the JSON body regardless of success/fail
+                const data = await response.json();
+
+                if (response.ok) {
+                    const select = document.getElementById(category + '_select');
+                    if (select) {
+                        select.add(new Option(data.value, data.id, true, true));
+                        select.dispatchEvent(new Event('change'));
+                        closeLookupModal();
+                        select.focus();
+                    }
+                } else {
+                    // 2. Handle Laravel Validation Errors (422)
+                    // Laravel usually returns errors in data.errors.value[0]
+                    let errorMessage = "Error occurred.";
+
+                    if (data.errors) {
+                        // Flatten the nested error object to get the first specific message
+                        errorMessage = Object.values(data.errors).flat()[0];
+                    } else if (data.message) {
+                        errorMessage = data.message;
+                    }
+
+                    showLookupError(errorMessage);
+                }
+            } catch (error) {
+                // 3. This only triggers on actual network failures (DNS, Offline, etc)
+                console.error('Fetch Error:', error);
+                showLookupError("Network error. Please try again.");
             }
         }
 
+        // Helper to show errors and keep focus locked to the text box
+        function showLookupError(message) {
+            const errorDisplay = document.getElementById('lookupError');
+            const valueInput = document.getElementById('lookupValue');
+
+            errorDisplay.innerText = message;
+            errorDisplay.classList.remove('hidden');
+            valueInput.classList.add('border-rose-500', 'ring-rose-200');
+
+            // Ensure focus stays on input so it doesn't jump to menu
+            valueInput.focus();
+        }
         // --- Image Swapping Logic ---
         function swapImage(newSrc, clickedButton) {
             const mainImage = document.getElementById('main-gallery-image');
