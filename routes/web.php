@@ -101,6 +101,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/api/laptops/fa-suggestions', [LaptopController::class, 'getNextFaSuggestions'])->name('laptops.fa-suggestions');
         Route::delete('/laptops/photos/{id}', [LaptopController::class, 'deletePhoto'])->name('laptops.photos.destroy');
 
+        Route::get('/employees/{employee}/view-deed', [EmployeeController::class, 'viewDeed'])->name('employees.view-deed');
+        Route::get('/employees/{employee}/view-completion', [EmployeeController::class, 'viewCompletion'])->name('employees.view-completion');
+
         // Employees
         Route::get('employees/{employee}/deed', [EmployeeController::class, 'viewDeed'])->name('employees.deed');
 

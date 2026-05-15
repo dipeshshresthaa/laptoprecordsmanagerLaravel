@@ -203,6 +203,18 @@ class EmployeeController extends Controller
         return response()->file($fullPath);
     }
 
+    public function viewCompletion(Employee $employee)
+    {
+        // Check if the completion certificate file exists
+        if (empty($employee->completion_certificate_path) || ! Storage::disk('public')->exists($employee->completion_certificate_path)) {
+            abort(404, 'Completion certificate not found.');
+        }
+
+        $fullPath = Storage::disk('public')->path($employee->completion_certificate_path);
+
+        return response()->file($fullPath);
+    }
+
     public function showMarkLeftForm(Employee $employee)
     {
         if (Auth::user()->employee_id === $employee->id) {

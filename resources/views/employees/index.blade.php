@@ -71,6 +71,10 @@
                             <th scope="col" class="table-th">Emp code</th>
                             <th scope="col" class="table-th">Name</th>
                             <th scope="col" class="table-th">Role</th>
+                            <!-- Table Header -->
+                            <th scope="col" class="table-th"">
+                                Docs</th>
+
                             <th scope="col" class="table-th !text-right">Actions</th>
                         </tr>
                     </thead>
@@ -99,6 +103,79 @@
                                         {{ $emp->role_display }}
                                     </span>
                                 </td>
+
+                                <!-- Table Body Cell -->
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @if (isset($emp->articleship_deed_path) or isset($emp->completion_certificate_path))
+                                        <div class="flex items-center space-x-3">
+                                            <!-- Articleship Deed -->
+                                            <div class="flex flex-col items-center">
+                                                <span class="text-[10px] text-slate-400 uppercase mb-1">Deed</span>
+                                                @if ($emp->articleship_deed_path)
+                                                    <a href="{{ route('employees.view-deed', $emp) }}" target="_blank"
+                                                        title="View Articleship Deed"
+                                                        class="text-emerald-600 hover:text-emerald-700 transition-colors">
+                                                        <svg class="w-6 h-6" fill="none" stroke="currentColor"
+                                                            viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                                            </path>
+                                                        </svg>
+                                                    </a>
+                                                @else
+                                                    <span title="No deed uploaded" class="text-slate-300">
+                                                        <svg class="w-6 h-6" fill="none" stroke="currentColor"
+                                                            viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M9 13h6m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2zM15 13l-3-3m0 0l-3 3m3-3v12">
+                                                            </path>
+                                                            <path d="M6 18L18 6" stroke="currentColor"
+                                                                stroke-width="2" stroke-linecap="round" />
+                                                        </svg>
+                                                    </span>
+                                                @endif
+                                            </div>
+
+                                            <!-- Completion Certificate -->
+                                            <div class="flex flex-col items-center border-l border-slate-200 pl-3">
+                                                <span class="text-[10px] text-slate-400 uppercase mb-1">Comp</span>
+                                                @if ($emp->completion_certificate_path)
+                                                    <a href="{{ route('employees.view-completion', $emp) }}"
+                                                        target="_blank" title="View Completion Certificate"
+                                                        class="text-blue-600 hover:text-blue-700 transition-colors">
+                                                        <svg class="w-6 h-6" fill="none" stroke="currentColor"
+                                                            viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z">
+                                                            </path>
+                                                            <path
+                                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                                            </path>
+                                                        </svg>
+                                                    </a>
+                                                @else
+                                                    <span title="No completion certificate" class="text-slate-300">
+                                                        <svg class="w-6 h-6" fill="none" stroke="currentColor"
+                                                            viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M9 13h6m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                                            </path>
+                                                            <path d="M6 18L18 6" stroke="currentColor"
+                                                                stroke-width="2" stroke-linecap="round" />
+                                                        </svg>
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @else
+                                        <span class="text-slate-400 text-xs italic">N/A</span>
+                                    @endif
+                                </td>
+
                                 <td class="table-td text-right text-sm font-medium">
                                     <div
                                         class="flex items-center justify-end space-x-3 opacity-0 group-hover:opacity-100 transition-opacity">

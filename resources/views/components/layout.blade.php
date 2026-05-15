@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,63 +8,117 @@
     <title>Laptop Records Manager</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap"
+        rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
-        @keyframes slideInRight { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        .toast-enter { animation: slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .toast-exit { opacity: 0; transform: scale(0.95); transition: all 0.4s ease-in-out; }
-        @keyframes shrink { from { width: 100%; } to { width: 0%; } }
+        /* Keeps the slide-in from the right */
+        @keyframes slideInRight {
+            from {
+                transform: translateX(120%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast-enter {
+            animation: slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Updated exit to feel smoother at the bottom */
+        .toast-exit {
+            opacity: 0;
+            transform: translateX(20px);
+            /* Slides slightly right as it fades */
+            transition: all 0.4s ease-in-out;
+        }
+
+        @keyframes shrink {
+            from {
+                width: 100%;
+            }
+
+            to {
+                width: 0%;
+            }
+        }
     </style>
 </head>
 
 <body class="bg-slate-50 text-slate-900 font-sans antialiased selection:bg-blue-100 selection:text-blue-900 relative">
 
-    <div id="toast-container" class="fixed top-6 right-6 z-50 flex flex-col gap-4 w-full max-w-sm pointer-events-none">
+    <div id="toast-container"
+        class="fixed bottom-6 right-6 z-50 flex flex-col-reverse gap-4 w-full max-w-sm pointer-events-none">
         @if (session('success'))
             <div class="toast-message toast-enter toast-base toast-success">
-                <div class="absolute bottom-0 left-0 h-1 bg-emerald-500 animate-[shrink_4s_linear_forwards]" style="width: 100%; animation-name: shrink;"></div>
+                <div class="absolute top-0 left-0 h-1 bg-emerald-500 animate-[shrink_4s_linear_forwards]"
+                    style="width: 100%; animation-name: shrink;"></div>
                 <div class="flex-shrink-0">
-                    <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
                 </div>
                 <div class="ml-3 w-0 flex-1 pt-0.5">
                     <p class="text-sm font-semibold text-slate-900">Success</p>
                     <p class="mt-1 text-sm text-slate-500">{{ session('success') }}</p>
                 </div>
                 <button type="button" class="toast-close-btn close-toast">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
                 </button>
             </div>
         @endif
 
         @if ($errors->any())
             <div class="toast-message toast-enter toast-base toast-error">
-                <div class="absolute bottom-0 left-0 h-1 bg-rose-500 animate-[shrink_6s_linear_forwards]" style="width: 100%; animation-name: shrink; animation-duration: 6s;"></div>
+                <div class="absolute top-0 left-0 h-1 bg-rose-500 animate-[shrink_6s_linear_forwards]"
+                    style="width: 100%; animation-name: shrink; animation-duration: 6s;"></div>
                 <div class="flex-shrink-0">
-                    <svg class="w-6 h-6 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    <svg class="w-6 h-6 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                        </path>
+                    </svg>
                 </div>
                 <div class="ml-3 w-0 flex-1 pt-0.5">
                     <p class="text-sm font-semibold text-slate-900">Action Required</p>
                     <p class="mt-1 text-sm text-slate-500">{{ $errors->first() }}</p>
                 </div>
                 <button type="button" class="toast-close-btn close-toast">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
                 </button>
             </div>
         @endif
 
         @if (session('error'))
             <div class="toast-message toast-enter toast-base toast-error">
-                <div class="absolute bottom-0 left-0 h-1 bg-rose-500 animate-[shrink_6s_linear_forwards]" style="width: 100%; animation-name: shrink; animation-duration: 6s;"></div>
+                <div class="absolute bottom-0 left-0 h-1 bg-rose-500 animate-[shrink_6s_linear_forwards]"
+                    style="width: 100%; animation-name: shrink; animation-duration: 6s;"></div>
                 <div class="flex-shrink-0">
-                    <svg class="w-6 h-6 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <svg class="w-6 h-6 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
                 </div>
                 <div class="ml-3 w-0 flex-1 pt-0.5">
                     <p class="text-sm font-semibold text-slate-900">Error</p>
                     <p class="mt-1 text-sm text-slate-500">{{ session('error') }}</p>
                 </div>
                 <button type="button" class="toast-close-btn close-toast">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
                 </button>
             </div>
         @endif
@@ -76,27 +131,39 @@
 
                     <div class="flex items-center">
                         <div class="flex items-center space-x-3 mr-8 shrink-0">
-                            <a href="{{ route('dashboard') }}" class="flex items-center space-x-3 overflow-hidden focus:outline-none hover:opacity-80 transition-opacity cursor-pointer">
-                                <svg class="w-8 h-8 text-blue-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                                <span class="font-bold text-xl tracking-tight text-slate-900">Laptop Records Manager</span>
+                            <a href="{{ route('dashboard') }}"
+                                class="flex items-center space-x-3 overflow-hidden focus:outline-none hover:opacity-80 transition-opacity cursor-pointer">
+                                <svg class="w-8 h-8 text-blue-500 shrink-0" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                                <span class="font-bold text-xl tracking-tight text-slate-900">Laptop Records
+                                    Manager</span>
                             </a>
                         </div>
 
                         <div class="hidden sm:flex sm:space-x-8">
-                            <a href="{{ route('employees.index') }}" class="nav-link {{ request()->routeIs('employees.*') ? 'nav-link-active' : 'nav-link-inactive' }}">
+                            <a href="{{ route('employees.index') }}"
+                                class="nav-link {{ request()->routeIs('employees.*') ? 'nav-link-active' : 'nav-link-inactive' }}">
                                 Employees
                             </a>
-                            <a href="{{ route('laptops.index') }}" class="nav-link {{ request()->routeIs('laptops.*') ? 'nav-link-active' : 'nav-link-inactive' }}">
+                            <a href="{{ route('laptops.index') }}"
+                                class="nav-link {{ request()->routeIs('laptops.*') ? 'nav-link-active' : 'nav-link-inactive' }}">
                                 Laptops
                             </a>
-                            <a href="{{ route('lookups.index') }}" class="nav-link {{ request()->routeIs('lookups.*') ? 'nav-link-active' : 'nav-link-inactive' }}">
+                            <a href="{{ route('lookups.index') }}"
+                                class="nav-link {{ request()->routeIs('lookups.*') ? 'nav-link-active' : 'nav-link-inactive' }}">
                                 Settings
                             </a>
-                            <a href="{{ route('reports.index') }}" class="nav-link {{ request()->routeIs('reports.*') ? 'nav-link-active' : 'nav-link-inactive' }}">
+                            <a href="{{ route('reports.index') }}"
+                                class="nav-link {{ request()->routeIs('reports.*') ? 'nav-link-active' : 'nav-link-inactive' }}">
                                 Firm reports
                             </a>
                             @if (Auth::user()->is_admin)
-                                <a href="{{ route('users.index') }}" class="nav-link {{ request()->routeIs('users.*') ? 'nav-link-active' : 'nav-link-inactive' }}">
+                                <a href="{{ route('users.index') }}"
+                                    class="nav-link {{ request()->routeIs('users.*') ? 'nav-link-active' : 'nav-link-inactive' }}">
                                     Users
                                 </a>
                             @endif
@@ -105,8 +172,10 @@
 
                     <div class="flex items-center space-x-6">
                         <div class="hidden sm:flex flex-col text-right">
-                            <span class="text-xs text-slate-500 uppercase font-semibold tracking-wider">Logged in as</span>
-                            <span class="text-sm font-bold text-slate-900">{{ Auth::user()->employee->full_name ?? Auth::user()->username }}</span>
+                            <span class="text-xs text-slate-500 uppercase font-semibold tracking-wider">Logged in
+                                as</span>
+                            <span
+                                class="text-sm font-bold text-slate-900">{{ Auth::user()->employee->full_name ?? Auth::user()->username }}</span>
                         </div>
 
                         <div class="h-8 w-px bg-slate-200 hidden sm:block"></div>
@@ -115,7 +184,12 @@
                             @csrf
                             <button type="submit" class="btn-outline-danger group">
                                 Logout
-                                <svg class="w-4 h-4 ml-2 text-slate-400 group-hover:text-rose-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                                <svg class="w-4 h-4 ml-2 text-slate-400 group-hover:text-rose-600 transition-colors"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                                    </path>
+                                </svg>
                             </button>
                         </form>
                     </div>
@@ -139,15 +213,15 @@
 
                 const removeToast = () => {
                     toast.classList.add('toast-exit');
-                    setTimeout(() => toast.remove(), 400); 
+                    setTimeout(() => toast.remove(), 400);
                 };
 
                 const timer = setTimeout(removeToast, duration);
                 const closeBtn = toast.querySelector('.close-toast');
-                
+
                 if (closeBtn) {
                     closeBtn.addEventListener('click', () => {
-                        clearTimeout(timer); 
+                        clearTimeout(timer);
                         removeToast();
                     });
                 }
@@ -155,4 +229,5 @@
         });
     </script>
 </body>
+
 </html>
