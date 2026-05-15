@@ -15,24 +15,28 @@
 
             <div class="lg:col-span-1 space-y-6">
                 <div class="card">
-                    <div class="h-48 bg-slate-50 border-b border-slate-100 flex items-center justify-center p-4">
-                        <div class="w-full md:w-1/3 flex flex-col items-center">
+                    <!-- Removed fixed height (h-48) and adjusted padding -->
+                    <div class="bg-slate-50 border-b border-slate-100 flex items-center justify-center p-6">
+
+                        <!-- Removed md:w-1/3, added max-w-sm to keep it appropriately sized but responsive -->
+                        <div class="w-full max-w-sm flex flex-col items-center">
                             @if ($laptop->photos && $laptop->photos->count() > 0)
 
-                                <div class="relative w-full aspect-square overflow-hidden rounded-lg border border-slate-200 group bg-slate-50 mb-3"
+                                <!-- Changed to bg-white to pop against the slate-50 background -->
+                                <div class="relative w-full aspect-square overflow-hidden rounded-lg border border-slate-200 group bg-white mb-4 shadow-sm"
                                     id="main-image-container">
                                     @php $firstPhotoUrl = Storage::url($laptop->photos->first()->photo_path); @endphp
                                     <img src="{{ $firstPhotoUrl }}" alt="Laptop Main View" id="main-gallery-image"
-                                        class="w-full h-full object-contain transition-transform duration-500 ease-in-out group-hover:scale-[1.7] origin-center cursor-crosshair"
+                                        class="w-full h-full object-contain p-2 transition-transform duration-500 ease-in-out group-hover:scale-[2.5] origin-center cursor-crosshair"
                                         onmousemove="zoomImage(event, this)" onmouseleave="resetZoom(this)">
                                 </div>
 
                                 @if ($laptop->photos->count() > 1)
-                                    <div class="flex gap-2 w-full overflow-x-auto pb-2 custom-scrollbar">
+                                    <div class="flex gap-2 w-full overflow-x-auto pb-2 custom-scrollbar justify-center">
                                         @foreach ($laptop->photos as $index => $photo)
                                             @php $photoUrl = Storage::url($photo->photo_path); @endphp
                                             <button type="button" onclick="swapImage('{{ $photoUrl }}', this)"
-                                                class="thumbnail-btn flex-shrink-0 w-16 h-16 rounded border-2 overflow-hidden transition-all {{ $index === 0 ? 'border-blue-500 shadow-md' : 'border-transparent hover:border-slate-300 opacity-70 hover:opacity-100' }}">
+                                                class="thumbnail-btn flex-shrink-0 w-16 h-16 bg-white rounded border-2 overflow-hidden transition-all {{ $index === 0 ? 'border-blue-500 shadow-md' : 'border-slate-200 hover:border-slate-400 opacity-70 hover:opacity-100' }}">
                                                 <img src="{{ $photoUrl }}" alt="Thumbnail {{ $index + 1 }}"
                                                     class="w-full h-full object-cover">
                                             </button>
@@ -41,8 +45,8 @@
                                 @endif
                             @else
                                 <div
-                                    class="w-full aspect-square bg-slate-100 rounded-lg flex flex-col items-center justify-center text-slate-400 border border-slate-200">
-                                    <svg class="w-12 h-12 mb-2" fill="none" stroke="currentColor"
+                                    class="w-full aspect-square bg-slate-100 rounded-lg flex flex-col items-center justify-center text-slate-400 border border-slate-200 shadow-sm">
+                                    <svg class="w-12 h-12 mb-2 text-slate-300" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                             d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
