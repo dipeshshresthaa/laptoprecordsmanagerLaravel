@@ -22,7 +22,7 @@ class Employee extends Model
         'phone_number', 'address_state', 'address_district', 'address_municipality',
         'pan_number', 'role', 'designation', 'joining_date',
         'exit_date', 'exit_reason', 'articleship_completion_date',
-        'bank_name', 'bank_branch', 'bank_account_number', 'cit_number',
+        'bank_name_id', 'bank_branch_id', 'bank_account_number', 'cit_number',
         'is_active', 'principal_id', 'created_by_id', 'modified_by_id',
         'articleship_deed_path', 'completion_certificate_path',
     ];
@@ -101,5 +101,15 @@ class Employee extends Model
     public function modifier()
     {
         return $this->belongsTo(User::class, 'modified_by_id');
+    }
+
+    public function bankName(): BelongsTo
+    {
+        return $this->belongsTo(SystemLookup::class, 'bank_name_id');
+    }
+
+    public function bankBranch(): BelongsTo
+    {
+        return $this->belongsTo(SystemLookup::class, 'bank_branch_id');
     }
 }

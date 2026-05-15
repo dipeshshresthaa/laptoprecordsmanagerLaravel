@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Laptop;
-use App\Models\LaptopRepair;
+use App\Models\SystemLookup; // <-- Added import
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -30,8 +30,11 @@ class LaptopRepairController extends Controller
             $minDate = $lastRepair->returned_date;
         }
 
-        // 2. Fetch unique vendors for the HTML5 Autocomplete DataList
-        $vendors = LaptopRepair::select('vendor_name')->distinct()->orderBy('vendor_name', 'asc')->pluck('vendor_name');
+        // 2. Fetch vendors from SystemLookup instead of grouping strings
+        $vendors = SystemLookup::query()
+            ->where('category', 'Vendor')
+            ->orderBy('value', 'asc')
+            ->get();
 
         return view('laptops.repair_send', compact('laptop', 'minDate', 'vendors'));
     }
@@ -39,7 +42,7 @@ class LaptopRepairController extends Controller
     public function storeSend(Request $request, Laptop $laptop)
     {
         $request->validate([
-            'vendor_name' => 'required|string|max:255',
+            'vendor_id' => 'required|exists:system_lookups,id', // <-- Changed validation
             'issue_description' => 'required|string',
             // DATE VALIDATION: Cannot be in the future, cannot be before previous events
             'sent_date' => [
@@ -51,7 +54,7 @@ class LaptopRepairController extends Controller
 
         // 1. Log the Repair Event
         $laptop->repairs()->create([
-            'vendor_name' => $request->vendor_name,
+            'vendor_id' => $request->vendor_id, // <-- Save the ID
             'issue_description' => $request->issue_description,
             'sent_date' => $request->sent_date,
             'sent_by_id' => Auth::id(),

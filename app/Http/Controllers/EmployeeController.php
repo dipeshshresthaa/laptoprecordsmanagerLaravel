@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SaveEmployeeRequest;
 use App\Models\Employee;
 use App\Models\LaptopAssignment;
+use App\Models\SystemLookup;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -95,19 +96,8 @@ class EmployeeController extends Controller
     {
         $potentialPrincipals = Employee::query()->where('role', 'Partner')->where('emp_code', '!=', 'ADMIN001')->get();
 
-        $bankNames = Employee::query()
-            ->whereNotNull('bank_name', 'and')
-            ->where('bank_name', '!=', '')
-            ->distinct()
-            ->get(['bank_name'])
-            ->pluck('bank_name');
-
-        $bankBranches = Employee::query()
-            ->whereNotNull('bank_branch', 'and')
-            ->where('bank_branch', '!=', '')
-            ->distinct()
-            ->get(['bank_branch'])
-            ->pluck('bank_branch');
+        $bankNames = SystemLookup::query()->where('category', 'BankName')->get();
+        $bankBranches = SystemLookup::query()->where('category', 'BankBranch')->get();
 
         $employee = new Employee;
 
@@ -136,19 +126,8 @@ class EmployeeController extends Controller
 
         $potentialPrincipals = Employee::query()->where('role', 'Partner')->where('id', '!=', $employee->id)->get();
 
-        $bankNames = Employee::query()
-            ->whereNotNull('bank_name', 'and')
-            ->where('bank_name', '!=', '')
-            ->distinct()
-            ->get(['bank_name'])
-            ->pluck('bank_name');
-
-        $bankBranches = Employee::query()
-            ->whereNotNull('bank_branch', 'and')
-            ->where('bank_branch', '!=', '')
-            ->distinct()
-            ->get(['bank_branch'])
-            ->pluck('bank_branch');
+        $bankNames = SystemLookup::query()->where('category', 'BankName')->get();
+        $bankBranches = SystemLookup::query()->where('category', 'BankBranch')->get();
 
         return view('employees.form', compact('employee', 'potentialPrincipals', 'bankNames', 'bankBranches'));
     }

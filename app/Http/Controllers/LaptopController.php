@@ -99,6 +99,10 @@ class LaptopController extends Controller
                 'string',
                 Rule::unique('laptops', 'serial_number')->ignore($laptop->id),
             ],
+            'laptop_fa_code' => [
+                'nullable',
+                'string',
+                Rule::unique('laptops', 'laptop_fa_code')->ignore($laptop->id), ],
             'brand_id' => 'required|exists:system_lookups,id',
             'model_id' => 'required|exists:system_lookups,id',
             'purchase_date' => 'required|date|before_or_equal:today',
@@ -169,7 +173,8 @@ class LaptopController extends Controller
 
     private function getTimelineData(Laptop $laptop)
     {
-        $laptop->load(['brand', 'model', 'processor', 'ramSize', 'storageSize', 'screenSize', 'assignments.employee', 'repairs', 'upgrades', 'photos']);
+        // 1. UPDATE: Eager load 'repairs.vendor' instead of just 'repairs'
+        $laptop->load(['brand', 'model', 'processor', 'ramSize', 'storageSize', 'screenSize', 'assignments.employee', 'repairs.vendor', 'upgrades', 'photos']);
         $timeline = collect();
 
         // Priority logic for same-day events (Lower number = happens earlier in the day)
@@ -210,13 +215,16 @@ class LaptopController extends Controller
         }
 
         foreach ($laptop->repairs as $repair) {
+            // 2. UPDATE: Safely fetch the vendor value from the relationship
+            $vendorName = $repair->vendor->value ?? 'Unknown Vendor';
+
             $timeline->push((object) [
                 'date' => $repair->sent_date,
                 'priority' => 50,
                 'type' => 'Repair dispatch',
                 'icon' => '🛠️',
                 'color' => 'bg-rose-100 text-rose-600',
-                'title' => "Sent to {$repair->vendor_name} for repair",
+                'title' => "Sent to {$vendorName} for repair",
                 'details' => "Issue: {$repair->issue_description}",
             ]);
 
@@ -227,7 +235,7 @@ class LaptopController extends Controller
                     'type' => 'Repair return',
                     'icon' => '📥',
                     'color' => 'bg-emerald-100 text-emerald-600',
-                    'title' => "Received back from {$repair->vendor_name}",
+                    'title' => "Received back from {$vendorName}",
                     'details' => "Resolution: {$repair->repair_notes} | Cost: Rs. ".number_format($repair->repair_cost, 2),
                 ]);
             }

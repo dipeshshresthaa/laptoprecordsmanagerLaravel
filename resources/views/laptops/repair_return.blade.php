@@ -17,7 +17,8 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                     <p class="text-xs text-rose-600 mb-1">Vendor</p>
-                    <p class="font-medium text-slate-900">{{ $activeRepair->vendor_name }}</p>
+                    <p class="font-medium text-slate-900">
+                        {{ $activeRepair->vendor->value ?? ($activeRepair->vendor_name ?? 'Unknown Vendor') }}</p>
                 </div>
                 <div>
                     <p class="text-xs text-rose-600 mb-1">Sent date</p>
@@ -32,8 +33,7 @@
             </div>
         </div>
 
-        <form action="{{ route('laptops.store_repair_return', $laptop) }}" method="POST"
-            class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <form action="{{ route('laptops.store_repair_return', $laptop) }}" method="POST" class="card">
             @csrf
             <div class="p-6 space-y-8">
 
@@ -108,41 +108,35 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Date received back *</label>
+                            <label class="form-label">Date received back *</label>
                             <input type="date" name="returned_date"
                                 min="{{ $activeRepair->sent_date->format('Y-m-d') }}"
                                 max="{{ now()->format('Y-m-d') }}" value="{{ date('Y-m-d') }}" required
-                                class="w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+                                class="form-input">
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Repair cost (Optional)</label>
+                            <label class="form-label">Repair cost (Optional)</label>
                             <div class="relative">
                                 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                    <span class="text-slate-500 sm:text-sm"></span>
                                 </div>
                                 <input type="number" name="repair_cost" step="0.01" min="0"
-                                    placeholder="0.00"
-                                    class="block w-full rounded-lg border-slate-300 pl-7 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+                                    placeholder="0.00" class="form-input pl-9">
                             </div>
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Repair notes / resolution *</label>
+                        <label class="form-label">Repair notes / resolution *</label>
                         <textarea name="repair_notes" required rows="3"
-                            placeholder="What was fixed? e.g. Motherboard replaced, screen fixed under warranty..."
-                            class="w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">{{ old('repair_notes') }}</textarea>
+                            placeholder="What was fixed? e.g. Motherboard replaced, screen fixed under warranty..." class="form-input">{{ old('repair_notes') }}</textarea>
                     </div>
                 </div>
             </div>
 
             <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end space-x-3">
-                <a href="{{ route('laptops.index') }}"
-                    class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 bg-white hover:bg-slate-50 text-sm font-medium">Cancel</a>
-                <button type="submit"
-                    class="px-5 py-2 bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-700 text-sm font-medium transition-colors">Process
-                    receipt</button>
+                <a href="{{ route('laptops.index') }}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary px-5 py-2">Process receipt</button>
             </div>
         </form>
     </div>
