@@ -45,13 +45,36 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        // --- NEW: Calculate Real Hardware Allocations ---
+        $allLaptops = Laptop::with('brand')->get();
+        $totalLaptopsCount = $allLaptops->count();
+        
+        $brandCounts = $allLaptops->groupBy(function ($laptop) {
+            return $laptop->brand ? $laptop->brand->value : 'Unknown/Unbranded';
+        })->map->count();
+
+        $allocations = [];
+        $colors = ['bg-indigo-500', 'bg-purple-500', 'bg-emerald-500', 'bg-amber-500', 'bg-rose-500', 'bg-sky-500', 'bg-slate-500'];
+        $colorIndex = 0;
+
+        // Sort brands by most popular first
+        foreach ($brandCounts->sortByDesc(fn($count) => $count) as $brandName => $count) {
+            $allocations[] = [
+                'name' => $brandName,
+                'val' => $totalLaptopsCount > 0 ? round(($count / $totalLaptopsCount) * 100) : 0,
+                'color' => $colors[$colorIndex % count($colors)],
+            ];
+            $colorIndex++;
+        }
+
         return view('dashboard', compact(
             'availableLaptops', 'availableLaptopsList',
             'assignedLaptops', 'assignedLaptopsList',
             'maintenanceLaptops', 'maintenanceLaptopsList',
             'totalEmployees',
             'totalUsers',
-            'recentAssignments'
+            'recentAssignments',
+            'allocations' // Pass the real dynamic data to the view
         ));
     }
 }

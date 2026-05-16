@@ -1,5 +1,5 @@
 <x-layout>
-    <div class="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 mt-4 print:p-0 print:mt-0">
+    <div class="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 mt-0 print:p-0 print:mt-0">
 
         <div
             class="mb-8 flex justify-between items-end border-b border-slate-200 pb-5 print:border-b-2 print:border-slate-800">

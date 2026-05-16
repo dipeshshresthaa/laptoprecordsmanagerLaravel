@@ -1,5 +1,5 @@
 <x-layout>
-    <div class="max-w-5xl mx-auto p-4 sm:p-6 mt-4">
+    <div class="max-w-5xl mx-auto p-4 sm:p-6 mt-0">
 
         <div class="mb-6 flex justify-between items-end">
             <div>
@@ -199,8 +199,6 @@
                     </div>
                 </div>
 
-
-
                 <h3 class="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-100 pb-2">Status and media
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -257,26 +255,21 @@
                             form.action = `/laptops/photos/${id}`;
                             form.innerHTML =
                                 `<input type="hidden" name="_method" value="DELETE">
-                                                      <input type="hidden" name="_token" value="{{ csrf_token() }}">`;
+                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">`;
                             document.body.appendChild(form);
                             form.submit();
                         }
                     }
                 </script>
-            </div>
-    </div>
-    @if (!$laptop->is_disposed)
-        <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end space-x-3">
-            <a href="{{ route('laptops.index') }}" class="btn btn-secondary">Cancel</a>
-            <button type="submit" class="btn btn-primary px-5 py-2">Save laptop</button>
-        </div>
-    @endif
-    </form>
+            </div> @if (!$laptop->is_disposed)
+                <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end space-x-3">
+                    <a href="{{ route('laptops.index') }}" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary px-5 py-2">Save laptop</button>
+                </div>
+            @endif
+        </form>
 
-
-    </div>
-
-    <script>
+    </div> <script>
         document.addEventListener('DOMContentLoaded', function() {
             const faInput = document.getElementById('fa_code_input');
             const suggestionContainer = document.getElementById('fa_suggestions');
@@ -322,23 +315,20 @@
                     .catch(() => modelSelect.innerHTML = '<option value="">Error loading models</option>');
             });
         }
-        let lastFocusedElement = null; // New global variable to track focus
+        
+        let lastFocusedElement = null; 
+        
         function openLookupModal(category) {
-            // Store the element that opened the modal (the "+ New" button)
             lastFocusedElement = document.activeElement;
-
             document.getElementById('lookupCategory').value = category;
             document.getElementById('lookupTitle').innerText = category.replace(/([A-Z])/g, ' $1').trim();
             document.getElementById('lookupModal').classList.remove('hidden');
             document.getElementById('lookupModal').classList.add('flex');
 
-            // Focus the input inside the modal
             setTimeout(() => {
                 document.getElementById('lookupValue').focus();
             }, 50);
         }
-
-
 
         async function submitLookup() {
             const category = document.getElementById('lookupCategory').value;
@@ -380,15 +370,11 @@
                     if (select) {
                         select.add(new Option(data.value, data.id, true, true));
                         select.dispatchEvent(new Event('change'));
-
                         closeLookupModal();
-
-                        // CRITICAL: Focus the dropdown so the user can continue typing/tabbing
                         select.focus();
                     }
                 } else {
-                    const msg = data.errors ? Object.values(data.errors).flat()[0] : (data.message ||
-                        'Error occurred.');
+                    const msg = data.errors ? Object.values(data.errors).flat()[0] : (data.message || 'Error occurred.');
                     showLookupError(msg);
                 }
             } catch (error) {
@@ -399,11 +385,9 @@
         function closeLookupModal() {
             document.getElementById('lookupModal').classList.add('hidden');
             document.getElementById('lookupModal').classList.remove('flex');
-
             const input = document.getElementById('lookupValue');
             input.value = '';
 
-            // Return focus to the button that opened the modal
             if (lastFocusedElement) {
                 lastFocusedElement.focus();
             }
@@ -411,7 +395,7 @@
 
         function handleLookupKey(event) {
             if (event.key === "Enter") {
-                event.preventDefault(); // Stop form submission
+                event.preventDefault();
                 submitLookup();
             }
         }
@@ -419,12 +403,9 @@
         function showLookupError(message) {
             const errorDisplay = document.getElementById('lookupError');
             const valueInput = document.getElementById('lookupValue');
-
             errorDisplay.innerText = message;
             errorDisplay.classList.remove('hidden');
             valueInput.classList.add('border-rose-500', 'ring-rose-200');
-
-            // Crucial: Force focus back to the input so it doesn't jump to the menu
             valueInput.focus();
         }
     </script>
@@ -447,5 +428,4 @@
             </div>
         </div>
     </div>
-
 </x-layout>

@@ -1,5 +1,5 @@
 <x-layout>
-    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 mt-4">
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 mt-0">
 
         <div class="sm:flex sm:items-center sm:justify-between mb-8">
             <div>

@@ -1,215 +1,210 @@
 <x-layout>
-    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 mt-4">
-
-        <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-                <h2 class="text-2xl font-bold text-slate-900 tracking-tight">System overview</h2>
-                <p class="mt-1 text-sm text-slate-500">Welcome to the Laptop Records Manager dashboard.</p>
+    <div class="max-w-7xl mx-auto space-y-8 mt-4">
+        
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="animate-[fade-in-right_0.5s_ease-out]">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="w-2 h-2 bg-indigo-500 rounded-full"></span>
+                    <span class="text-slate-500 font-bold text-[10px] uppercase tracking-[0.2em]">Live Laptop and Employee Status</span>
+                </div>
+                <h2 class="text-3xl font-bold text-slate-900 tracking-tight font-display">Laptop and manpower overview</h2>
             </div>
-            <a href="{{ route('reports.index') }}" class="btn btn-primary shrink-0">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                    </path>
-                </svg>
-                Generate reports
+            
+            <a href="{{ route('reports.index') }}" class="inline-flex items-center justify-center px-6 py-3 btn-primary bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-2xl group text-xs uppercase tracking-widest font-black transition-all shadow-md animate-[fade-in-left_0.5s_ease-out]">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                Export Datasets
+                <svg class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
             </a>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-
-            <div onclick="openDashModal('modal-available')"
-                class="card p-6 flex items-center cursor-pointer hover:bg-slate-50 hover:border-emerald-300 hover:shadow-md transition-all group">
-                <div class="p-4 rounded-lg bg-emerald-50 text-emerald-600 group-hover:bg-emerald-100 transition-colors">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div onclick="openDashModal('modal-available')" class="bg-white border border-slate-200 rounded-[2rem] p-6 flex items-center justify-between shadow-sm cursor-pointer hover:border-emerald-300 hover:-translate-y-1 transition-all group">
+                <div>
+                    <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Available</p>
+                    <p class="text-3xl font-black text-slate-900">{{ $availableLaptops }}</p>
                 </div>
-                <div class="ml-5">
-                    <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Available</p>
-                    <p class="text-2xl font-bold text-emerald-700">{{ $availableLaptops }}</p>
+                <div class="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                 </div>
             </div>
 
-            <div onclick="openDashModal('modal-assigned')"
-                class="card p-6 flex items-center cursor-pointer hover:bg-slate-50 hover:border-blue-300 hover:shadow-md transition-all group">
-                <div class="p-4 rounded-lg bg-blue-50 text-blue-600 group-hover:bg-blue-100 transition-colors">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
-                        </path>
-                    </svg>
+            <div onclick="openDashModal('modal-assigned')" class="bg-white border border-slate-200 rounded-[2rem] p-6 flex items-center justify-between shadow-sm cursor-pointer hover:border-indigo-300 hover:-translate-y-1 transition-all group">
+                <div>
+                    <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Assigned</p>
+                    <p class="text-3xl font-black text-slate-900">{{ $assignedLaptops }}</p>
                 </div>
-                <div class="ml-5">
-                    <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Assigned</p>
-                    <p class="text-2xl font-bold text-blue-700">{{ $assignedLaptops }}</p>
+                <div class="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-100 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><polyline points="16 11 18 13 22 9"></polyline></svg>
                 </div>
             </div>
 
-            <div onclick="openDashModal('modal-maintenance')"
-                class="card p-6 flex items-center cursor-pointer hover:bg-slate-50 hover:border-rose-300 hover:shadow-md transition-all group">
-                <div class="p-4 rounded-lg bg-rose-50 text-rose-600 group-hover:bg-rose-100 transition-colors">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
-                        </path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    </svg>
+            <div onclick="openDashModal('modal-maintenance')" class="bg-white border border-slate-200 rounded-[2rem] p-6 flex items-center justify-between shadow-sm cursor-pointer hover:border-rose-300 hover:-translate-y-1 transition-all group">
+                <div>
+                    <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">In Repair</p>
+                    <p class="text-3xl font-black text-slate-900">{{ $maintenanceLaptops }}</p>
                 </div>
-                <div class="ml-5">
-                    <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">In repair</p>
-                    <p class="text-2xl font-bold text-rose-700">{{ $maintenanceLaptops }}</p>
+                <div class="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-100 text-rose-600 flex items-center justify-center group-hover:bg-rose-100 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
                 </div>
             </div>
 
-            <div class="card p-6 flex items-center">
-                <div class="p-4 rounded-lg bg-purple-50 text-purple-600">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
-                        </path>
-                    </svg>
+            <div class="bg-white border border-slate-200 rounded-[2rem] p-6 flex items-center justify-between shadow-sm">
+                <div>
+                    <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Employees</p>
+                    <p class="text-3xl font-black text-slate-900">{{ $totalEmployees }}</p>
                 </div>
-                <div class="ml-5">
-                    <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Employees</p>
-                    <p class="text-2xl font-bold text-purple-700">{{ $totalEmployees }}</p>
+                <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200 text-slate-600 flex items-center justify-center">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                 </div>
             </div>
-
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="lg:col-span-2 card">
-                <div class="card-header flex justify-between items-center bg-slate-50 border-b border-slate-200">
-                    <h3 class="card-title text-base">Recent assignments</h3>
-                    <a href="{{ route('laptops.index') }}"
-                        class="text-xs font-bold text-blue-600 hover:text-blue-800">View all inventory &rarr;</a>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="table-base w-full">
-                        <thead class="table-head">
-                            <tr>
-                                <th class="table-th">Employee</th>
-                                <th class="table-th">Hardware ID</th>
-                                <th class="table-th">Date</th>
-                                <th class="table-th">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100 bg-white">
-                            @forelse($recentAssignments as $assignment)
-                                <tr class="table-row">
-                                    <td class="table-td">
-                                        <div class="font-medium text-slate-900">{{ $assignment->employee->first_name }}
-                                            {{ $assignment->employee->last_name }}</div>
-                                        <div class="text-xs text-slate-500 mt-0.5">
-                                            {{ $assignment->employee->department ?? 'N/A' }}</div>
-                                    </td>
-                                    <td class="table-td font-mono text-sm text-slate-700">
-                                        {{ $assignment->laptop->serial_number }}
-                                    </td>
-                                    <td class="table-td text-sm text-slate-600">
-                                        {{ \Carbon\Carbon::parse($assignment->assigned_date)->format('M d, Y') }}
-                                    </td>
-                                    <td class="table-td">
-                                        @if ($assignment->returned_date)
-                                            <span
-                                                class="inline-flex px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600">Returned</span>
-                                        @else
-                                            <span
-                                                class="inline-flex px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-700">Active</span>
-                                        @endif
-                                    </td>
+            <div class="lg:col-span-2">
+                <div class="bg-white border border-slate-200 rounded-3xl overflow-hidden flex flex-col shadow-sm">
+                    <div class="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                        <h3 class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-600 flex items-center">
+                            <svg class="w-4 h-4 mr-3 text-indigo-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            Recent Assignments
+                        </h3>
+                        <span class="text-[9px] bg-indigo-50 text-indigo-600 border border-indigo-200 px-2 py-0.5 rounded-lg font-bold uppercase tracking-widest">Real-time Feed</span>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="text-[10px] text-slate-500 border-b border-slate-100 uppercase tracking-widest bg-white">
+                                    <th class="px-6 py-4 font-black">Employee</th>
+                                    <th class="px-6 py-4 font-black">Hardware ID</th>
+                                    <th class="px-6 py-4 font-black text-center">Status</th>
+                                    <th class="px-6 py-4 font-black text-right">Timestamp</th>
                                 </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="4" class="px-6 py-8 text-center text-sm text-slate-500 italic">No
-                                        recent assignment activity.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 bg-white">
+                                @forelse($recentAssignments as $assignment)
+                                    <tr class="group hover:bg-slate-50 transition-colors">
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center">
+                                                <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-700 text-[10px] font-black mr-4 border border-slate-200">
+                                                    {{ substr($assignment->employee->first_name, 0, 1) }}{{ substr($assignment->employee->last_name, 0, 1) }}
+                                                </div>
+                                                <div>
+                                                    <div class="font-bold text-slate-900 text-sm">
+                                                        {{ $assignment->employee->first_name }} {{ $assignment->employee->last_name }}
+                                                    </div>
+                                                    <div class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mt-0.5">
+                                                        {{ $assignment->employee->department ?? 'N/A' }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="font-mono text-xs text-indigo-600 font-bold bg-indigo-50 px-2 py-1 rounded-lg border border-indigo-100 tracking-widest">
+                                                {{ $assignment->laptop->serial_number }}
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 text-center">
+                                            @if ($assignment->returned_date)
+                                                <span class="px-2 py-1 text-[9px] font-black uppercase tracking-[0.2em] rounded-lg border bg-slate-50 text-slate-500 border-slate-200">
+                                                    Returned
+                                                </span>
+                                            @else
+                                                <span class="px-2 py-1 text-[9px] font-black uppercase tracking-[0.2em] rounded-lg border bg-emerald-50 text-emerald-600 border-emerald-200">
+                                                    Active
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4 text-right text-xs text-slate-500 font-bold font-mono">
+                                            {{ \Carbon\Carbon::parse($assignment->assigned_date)->format('M d') }}
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="px-6 py-8 text-center text-sm text-slate-500 italic">No recent assignment activity.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            @if (Auth::user()->is_admin)
-                <div class="lg:col-span-1 space-y-6">
-                    <div class="card p-6 bg-gradient-to-br from-slate-900 to-slate-800 text-white border-0">
-                        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4">Administration</h3>
+            <div class="lg:col-span-1 space-y-6">
+                <div class="bg-blue-600 rounded-[2rem] p-8 text-white relative overflow-hidden shadow-md border border-indigo-500 group">
+                    <div class="absolute -top-4 -right-4 p-8 text-white/10 group-hover:scale-110 transition-transform duration-700">
+                        <svg class="w-32 h-32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                    </div>
+                    <h4 class="text-xs font-black uppercase tracking-[0.3em] opacity-80 mb-6 flex items-center relative z-10">
+                        Quick Action
+                    </h4>
+                    <p class="text-xl font-light leading-tight mb-8 relative z-10">
+                        Start assigning new laptops today.
+                    </p>
+                    <a href="{{ route('laptops.index') }}" class="block text-center w-full py-4 bg-white text-blue-600 font-black rounded-2xl shadow-lg hover:bg-slate-50 transition-all transform active:scale-[0.98] text-xs uppercase tracking-widest relative z-10">
+                        Assign laptops
+                    </a>
+                </div>
 
-                        <div class="flex items-center justify-between mb-4 pb-4 border-b border-slate-700/50">
-                            <div class="flex items-center">
-                                <div class="p-2 bg-blue-500/20 rounded-lg text-blue-400 mr-3">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
-                                        </path>
-                                    </svg>
+                <div class="bg-white border border-slate-200 rounded-[2rem] p-8 shadow-sm">
+                    <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-8">Hardware Allocation</h4>
+                    <div class="space-y-6">
+                        @forelse($allocations as $item)
+                            <div>
+                                <div class="flex justify-between items-center mb-3">
+                                    <span class="text-xs text-slate-700 font-bold uppercase tracking-widest">{{ $item['name'] }}</span>
+                                    <span class="text-[10px] font-mono font-bold text-slate-500">{{ $item['val'] }}%</span>
                                 </div>
-                                <span class="font-medium">System users</span>
+                                <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden border border-slate-200/50">
+                                    <div class="h-full {{ $item['color'] }} rounded-full transition-all duration-1000 ease-out" style="width: {{ $item['val'] }}%"></div>
+                                </div>
                             </div>
-                            <span class="text-2xl font-bold">{{ $totalUsers }}</span>
-                        </div>
-
-                        <a href="{{ route('users.index') }}"
-                            class="block w-full py-2 px-4 bg-white/10 hover:bg-white/20 rounded text-center text-sm font-bold transition-colors">
-                            Manage users &rarr;
-                        </a>
+                        @empty
+                            <p class="text-sm text-slate-400 text-center italic">No hardware records to display.</p>
+                        @endforelse
                     </div>
                 </div>
-            @endif
-
+            </div>
         </div>
     </div>
 
-    <div id="modal-available"
-        class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden">
-            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-emerald-50">
-                <h3 class="text-lg font-bold text-emerald-900 flex items-center"><span
-                        class="w-2 h-2 rounded-full bg-emerald-500 mr-2"></span> Available laptops</h3>
-                <button onclick="closeDashModal('modal-available')" class="text-slate-400 hover:text-slate-600"><svg
-                        class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12"></path>
-                    </svg></button>
+    <div id="modal-available" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden border border-slate-200">
+            <div class="px-8 py-6 border-b border-emerald-100 flex justify-between items-center bg-emerald-50/50">
+                <h3 class="text-lg font-black text-emerald-900 uppercase tracking-widest text-sm flex items-center">
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full mr-3 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span> Available Laptops Pool
+                </h3>
+                <button onclick="closeDashModal('modal-available')" class="text-emerald-400 hover:text-emerald-700 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 6L6 18M6 6l12 12"></path></svg>
+                </button>
             </div>
             <div class="overflow-y-auto p-0 flex-1">
-                <table class="table-base w-full">
-                    <thead class="bg-slate-50 sticky top-0">
+                <table class="w-full">
+                    <thead class="bg-slate-50 sticky top-0 border-b border-slate-100">
                         <tr>
-                            <th class="table-th">Hardware ID</th>
-                            <th class="table-th">Model</th>
-                            <th class="table-th text-right">Action</th>
+                            <th class="px-8 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Serial Number</th>
+                            <th class="px-8 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Brand / Model</th>
+                            <th class="px-8 py-4 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">Action</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 bg-white">
                         @forelse($availableLaptopsList as $lap)
-                            <tr class="hover:bg-slate-50">
-                                <td class="px-6 py-3">
-                                    <div class="font-mono text-sm font-bold text-slate-900">{{ $lap->serial_number }}
-                                    </div>
-                                    <div class="text-xs text-slate-500">{{ $lap->laptop_fa_code ?? 'No FA Code' }}
-                                    </div>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-8 py-5">
+                                    <div class="font-mono text-sm font-black text-slate-900 leading-tight tracking-widest">{{ $lap->serial_number }}</div>
+                                    <div class="text-[9px] text-slate-500 font-bold uppercase mt-1 tracking-widest">{{ $lap->laptop_fa_code ?? 'NO FA CODE' }}</div>
                                 </td>
-                                <td class="px-6 py-3 text-sm text-slate-700">{{ $lap->brand->value ?? '' }}
-                                    {{ $lap->model->value ?? '' }}</td>
-                                <td class="px-6 py-3 text-right">
-                                    <a href="{{ route('laptops.assign', $lap) }}"
-                                        class="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white rounded-lg text-xs font-bold transition-colors">
-                                        Assign <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
-                                                d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                                        </svg>
+                                <td class="px-8 py-5 text-xs text-slate-600 font-bold uppercase tracking-widest">
+                                    {{ $lap->brand->value ?? '' }} / {{ $lap->model->value ?? '' }}
+                                </td>
+                                <td class="px-8 py-5 text-right">
+                                    <a href="{{ route('laptops.assign', $lap) }}" class="inline-block px-4 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest border border-indigo-100 transition-all">
+                                        Assign Device
                                     </a>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="3" class="px-6 py-8 text-center text-sm text-slate-500">No laptops
-                                    currently available.</td>
+                                <td colspan="3" class="px-8 py-8 text-center text-sm font-medium text-slate-400">No laptops available.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -218,52 +213,49 @@
         </div>
     </div>
 
-    <div id="modal-assigned"
-        class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden">
-            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-blue-50">
-                <h3 class="text-lg font-bold text-blue-900 flex items-center"><span
-                        class="w-2 h-2 rounded-full bg-blue-500 mr-2"></span> Assigned laptops</h3>
-                <button onclick="closeDashModal('modal-assigned')" class="text-slate-400 hover:text-slate-600"><svg
-                        class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12"></path>
-                    </svg></button>
+    <div id="modal-assigned" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden border border-slate-200">
+            <div class="px-8 py-6 border-b border-indigo-100 flex justify-between items-center bg-indigo-50/50">
+                <h3 class="text-lg font-black text-indigo-900 uppercase tracking-widest text-sm flex items-center">
+                    <span class="w-2 h-2 bg-indigo-500 rounded-full mr-3 shadow-[0_0_8px_rgba(99,102,241,0.5)]"></span> Active Hardware Assignments
+                </h3>
+                <button onclick="closeDashModal('modal-assigned')" class="text-indigo-400 hover:text-indigo-700 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 6L6 18M6 6l12 12"></path></svg>
+                </button>
             </div>
             <div class="overflow-y-auto p-0 flex-1">
-                <table class="table-base w-full">
-                    <thead class="bg-slate-50 sticky top-0">
+                <table class="w-full">
+                    <thead class="bg-slate-50 sticky top-0 border-b border-slate-100">
                         <tr>
-                            <th class="table-th">Hardware ID</th>
-                            <th class="table-th">Assigned To</th>
-                            <th class="table-th">Assigned Since</th>
+                            <th class="px-8 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Hardware ID</th>
+                            <th class="px-8 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Assigned Personnel</th>
+                            <th class="px-8 py-4 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">Assigned On</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 bg-white">
                         @forelse($assignedLaptopsList as $lap)
-                            <tr class="hover:bg-slate-50">
-                                <td class="px-6 py-3">
-                                    <a href="{{ route('laptops.history', $lap) }}"
-                                        class="font-mono text-sm font-bold text-blue-600 hover:underline">{{ $lap->serial_number }}</a>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-8 py-5">
+                                    <a href="{{ route('laptops.history', $lap) }}" class="font-mono text-sm font-black text-indigo-600 hover:text-indigo-500 transition-colors cursor-pointer tracking-widest underline decoration-indigo-200 underline-offset-4">
+                                        {{ $lap->serial_number }}
+                                    </a>
                                 </td>
-                                <td class="px-6 py-3">
-                                    <div class="text-sm font-medium text-slate-900">
-                                        {{ $lap->currentAssignment->employee->full_name ?? 'Unknown' }}</div>
-                                    <div class="text-xs text-slate-500">
-                                        {{ $lap->currentAssignment->employee->department ?? '' }}</div>
+                                <td class="px-8 py-5">
+                                    <div class="text-sm font-black text-slate-900 uppercase tracking-widest">{{ $lap->currentAssignment->employee->full_name ?? 'Unknown' }}</div>
+                                    <div class="text-[10px] text-slate-500 font-bold uppercase mt-1 tracking-[0.2em]">{{ $lap->currentAssignment->employee->department ?? '' }}</div>
                                 </td>
-                                <td class="px-6 py-3 text-sm text-slate-600">
+                                <td class="px-8 py-5 text-right">
                                     @if ($lap->currentAssignment)
-                                        {{ $lap->currentAssignment->assigned_date->format('M d, Y') }}
-                                        <span
-                                            class="text-xs text-slate-400">({{ $lap->currentAssignment->assigned_date->diffForHumans() }})</span>
+                                        <div class="text-xs font-bold text-slate-500 font-mono">
+                                            {{ $lap->currentAssignment->assigned_date->format('M d, Y') }}
+                                        </div>
+                                        <div class="text-[9px] text-emerald-500 font-black uppercase mt-1 tracking-widest">Active Assignment</div>
                                     @endif
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="3" class="px-6 py-8 text-center text-sm text-slate-500">No laptops
-                                    currently assigned.</td>
+                                <td colspan="3" class="px-8 py-8 text-center text-sm font-medium text-slate-400">No active assignments.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -272,64 +264,51 @@
         </div>
     </div>
 
-    <div id="modal-maintenance"
-        class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden">
-            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-rose-50">
-                <h3 class="text-lg font-bold text-rose-900 flex items-center"><span
-                        class="w-2 h-2 rounded-full bg-rose-500 mr-2"></span> Laptops in repair</h3>
-                <button onclick="closeDashModal('modal-maintenance')" class="text-slate-400 hover:text-slate-600"><svg
-                        class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12"></path>
-                    </svg></button>
+    <div id="modal-maintenance" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden border border-slate-200">
+            <div class="px-8 py-6 border-b border-rose-100 flex justify-between items-center bg-rose-50/50">
+                <h3 class="text-lg font-black text-rose-900 uppercase tracking-widest text-sm flex items-center">
+                    <span class="w-2 h-2 bg-rose-500 rounded-full mr-3 shadow-[0_0_8px_rgba(244,63,94,0.5)]"></span> Hardware Repair Queue
+                </h3>
+                <button onclick="closeDashModal('modal-maintenance')" class="text-rose-400 hover:text-rose-700 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 6L6 18M6 6l12 12"></path></svg>
+                </button>
             </div>
             <div class="overflow-y-auto p-0 flex-1">
-                <table class="table-base w-full">
-                    <thead class="bg-slate-50 sticky top-0">
+                <table class="w-full">
+                    <thead class="bg-slate-50 sticky top-0 border-b border-slate-100">
                         <tr>
-                            <th class="table-th">Hardware ID</th>
-                            <th class="table-th">Vendor</th>
-                            <th class="table-th">Time Elapsed</th>
-                            <th class="table-th text-right">Action</th>
+                            <th class="px-8 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Hardware ID</th>
+                            <th class="px-8 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Maintenance Vendor</th>
+                            <th class="px-8 py-4 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">Action</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 bg-white">
                         @forelse($maintenanceLaptopsList as $lap)
                             @php
                                 $activeRepair = $lap->repairs->first();
-                                $diffString = $activeRepair
-                                    ? $activeRepair->sent_date->diffForHumans([
-                                        'syntax' => \Carbon\CarbonInterface::DIFF_ABSOLUTE,
-                                        'parts' => 2,
-                                    ])
+                                $diffString = $activeRepair 
+                                    ? $activeRepair->sent_date->diffForHumans(['syntax' => \Carbon\CarbonInterface::DIFF_ABSOLUTE, 'parts' => 2]) 
                                     : 'Unknown';
                             @endphp
-                            <tr class="hover:bg-slate-50">
-                                <td class="px-6 py-3 font-mono text-sm font-bold text-slate-900">
-                                    {{ $lap->serial_number }}</td>
-                                <td class="px-6 py-3 text-sm text-slate-700">
-                                    {{ $activeRepair->vendor->value ?? 'Unknown Vendor' }}</td>
-                                <td class="px-6 py-3">
-                                    <span
-                                        class="inline-flex items-center px-2 py-1 rounded text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">
-                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                        </svg>
-                                        {{ $diffString }}
-                                    </span>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-8 py-5 font-mono text-sm font-black text-slate-900 tracking-widest">
+                                    {{ $lap->serial_number }}
                                 </td>
-                                <td class="px-6 py-3 text-right">
-                                    <a href="{{ route('laptops.repair_return', $lap) }}"
-                                        class="text-xs font-bold text-blue-600 hover:text-blue-800">Receive &rarr;</a>
+                                <td class="px-8 py-5 text-[10px] text-slate-500 font-black uppercase tracking-widest">
+                                    {{ $activeRepair->vendor->value ?? 'Unknown Vendor' }}
+                                </td>
+                                <td class="px-8 py-5 text-right">
+                                    <a href="{{ route('laptops.repair_return', $lap) }}" class="inline-flex items-center px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest bg-amber-50 text-amber-600 border border-amber-200 hover:bg-amber-100 transition-colors group">
+                                        <svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                        In Queue: {{ $diffString }}
+                                        <svg class="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                    </a>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="px-6 py-8 text-center text-sm text-slate-500">No laptops
-                                    currently in repair.</td>
+                                <td colspan="3" class="px-8 py-8 text-center text-sm font-medium text-slate-400">No hardware in maintenance queue.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -344,19 +323,24 @@
             modal.classList.remove('hidden');
             modal.classList.add('flex');
             document.body.style.overflow = 'hidden';
+            const innerBox = modal.querySelector('.max-w-4xl');
+            innerBox.classList.add('animate-[fade-in-up_0.3s_ease-out]');
         }
-
         function closeDashModal(id) {
             const modal = document.getElementById(id);
             modal.classList.add('hidden');
             modal.classList.remove('flex');
             document.body.style.overflow = 'auto';
         }
-        // Close modal on escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 ['modal-available', 'modal-assigned', 'modal-maintenance'].forEach(closeDashModal);
             }
         });
     </script>
+    <style>
+        @keyframes fade-in-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fade-in-right { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes fade-in-left { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+    </style>
 </x-layout>

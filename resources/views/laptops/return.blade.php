@@ -1,5 +1,5 @@
 <x-layout>
-    <div class="max-w-3xl mx-auto p-4 sm:p-6 mt-8">
+    <div class="max-w-3xl mx-auto p-4 sm:p-6 mt-0">
         <div class="mb-6 flex justify-between items-end">
             <div>
                 <h2 class="text-2xl font-bold text-slate-900">Process laptop return</h2>
